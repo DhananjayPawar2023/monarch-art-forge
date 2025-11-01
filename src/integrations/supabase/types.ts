@@ -14,16 +14,413 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      artists: {
+        Row: {
+          artwork_count: number | null
+          audio_story_url: string | null
+          avatar_url: string | null
+          bio: string | null
+          cover_image_url: string | null
+          created_at: string
+          id: string
+          instagram_url: string | null
+          is_featured: boolean | null
+          name: string
+          slug: string
+          specialty: string | null
+          twitter_url: string | null
+          updated_at: string
+          user_id: string | null
+          website_url: string | null
+        }
+        Insert: {
+          artwork_count?: number | null
+          audio_story_url?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          id?: string
+          instagram_url?: string | null
+          is_featured?: boolean | null
+          name: string
+          slug: string
+          specialty?: string | null
+          twitter_url?: string | null
+          updated_at?: string
+          user_id?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          artwork_count?: number | null
+          audio_story_url?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          id?: string
+          instagram_url?: string | null
+          is_featured?: boolean | null
+          name?: string
+          slug?: string
+          specialty?: string | null
+          twitter_url?: string | null
+          updated_at?: string
+          user_id?: string | null
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artists_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      artwork_images: {
+        Row: {
+          artwork_id: string
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string
+        }
+        Insert: {
+          artwork_id: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url: string
+        }
+        Update: {
+          artwork_id?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artwork_images_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      artworks: {
+        Row: {
+          artist_id: string
+          audio_story_url: string | null
+          chain: string | null
+          collection_id: string | null
+          contract_address: string | null
+          created_at: string
+          description: string | null
+          dimensions: string | null
+          edition_available: number | null
+          edition_total: number | null
+          id: string
+          ipfs_metadata_url: string | null
+          is_nft: boolean | null
+          is_physical: boolean | null
+          medium: string | null
+          price_eth: number | null
+          price_usd: number | null
+          primary_image_url: string | null
+          slug: string
+          status: Database["public"]["Enums"]["artwork_status"]
+          tags: string[] | null
+          title: string
+          token_id: string | null
+          updated_at: string
+          view_count: number | null
+          year: number | null
+        }
+        Insert: {
+          artist_id: string
+          audio_story_url?: string | null
+          chain?: string | null
+          collection_id?: string | null
+          contract_address?: string | null
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          edition_available?: number | null
+          edition_total?: number | null
+          id?: string
+          ipfs_metadata_url?: string | null
+          is_nft?: boolean | null
+          is_physical?: boolean | null
+          medium?: string | null
+          price_eth?: number | null
+          price_usd?: number | null
+          primary_image_url?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["artwork_status"]
+          tags?: string[] | null
+          title: string
+          token_id?: string | null
+          updated_at?: string
+          view_count?: number | null
+          year?: number | null
+        }
+        Update: {
+          artist_id?: string
+          audio_story_url?: string | null
+          chain?: string | null
+          collection_id?: string | null
+          contract_address?: string | null
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          edition_available?: number | null
+          edition_total?: number | null
+          id?: string
+          ipfs_metadata_url?: string | null
+          is_nft?: boolean | null
+          is_physical?: boolean | null
+          medium?: string | null
+          price_eth?: number | null
+          price_usd?: number | null
+          primary_image_url?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["artwork_status"]
+          tags?: string[] | null
+          title?: string
+          token_id?: string | null
+          updated_at?: string
+          view_count?: number | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artworks_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "artworks_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collections: {
+        Row: {
+          cover_image_url: string | null
+          created_at: string
+          curator_name: string | null
+          description: string | null
+          id: string
+          is_featured: boolean | null
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_image_url?: string | null
+          created_at?: string
+          curator_name?: string | null
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_image_url?: string | null
+          created_at?: string
+          curator_name?: string | null
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      newsletter_subscribers: {
+        Row: {
+          email: string
+          id: string
+          subscribed_at: string
+        }
+        Insert: {
+          email: string
+          id?: string
+          subscribed_at?: string
+        }
+        Update: {
+          email?: string
+          id?: string
+          subscribed_at?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          amount_crypto: string | null
+          amount_usd: number | null
+          artwork_id: string
+          buyer_email: string
+          buyer_wallet_address: string | null
+          created_at: string
+          currency: string | null
+          id: string
+          metadata: Json | null
+          order_number: string
+          payment_method: string
+          payment_status: Database["public"]["Enums"]["order_status"]
+          shipping_address: Json | null
+          stripe_payment_intent_id: string | null
+          transaction_hash: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_crypto?: string | null
+          amount_usd?: number | null
+          artwork_id: string
+          buyer_email: string
+          buyer_wallet_address?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          order_number: string
+          payment_method: string
+          payment_status?: Database["public"]["Enums"]["order_status"]
+          shipping_address?: Json | null
+          stripe_payment_intent_id?: string | null
+          transaction_hash?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_crypto?: string | null
+          amount_usd?: number | null
+          artwork_id?: string
+          buyer_email?: string
+          buyer_wallet_address?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          order_number?: string
+          payment_method?: string
+          payment_status?: Database["public"]["Enums"]["order_status"]
+          shipping_address?: Json | null
+          stripe_payment_intent_id?: string | null
+          transaction_hash?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+          wallet_address: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+          wallet_address?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          wallet_address?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "collector" | "artist"
+      artwork_status: "draft" | "published" | "sold" | "archived"
+      order_status:
+        | "pending"
+        | "processing"
+        | "completed"
+        | "cancelled"
+        | "refunded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +547,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "collector", "artist"],
+      artwork_status: ["draft", "published", "sold", "archived"],
+      order_status: [
+        "pending",
+        "processing",
+        "completed",
+        "cancelled",
+        "refunded",
+      ],
+    },
   },
 } as const

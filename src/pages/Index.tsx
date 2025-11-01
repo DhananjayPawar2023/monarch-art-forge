@@ -1,44 +1,136 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
 import FeaturedArtist from "@/components/FeaturedArtist";
+import SEO from "@/components/SEO";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+
+const emailSchema = z.string().email();
 
 const Index = () => {
-  const featuredArtworks = [
-    {
-      id: "1",
-      title: "Ethereal Horizons",
-      artistName: "Sarah Chen",
-      image: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=800&q=80",
-      price: "$2,400",
-      edition: "1/1"
-    },
-    {
-      id: "2",
-      title: "Digital Dreams",
-      artistName: "Marcus Rivera",
-      image: "https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=800&q=80",
-      price: "$1,800",
-      edition: "Edition of 5"
-    },
-    {
-      id: "3",
-      title: "Chromatic Visions",
-      artistName: "Elena Volkov",
-      image: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800&q=80",
-      price: "$3,200",
-      edition: "1/1"
-    },
-  ];
+  const [featuredArtworks, setFeaturedArtworks] = useState<any[]>([]);
+  const [featuredArtist, setFeaturedArtist] = useState<any>(null);
+  const [email, setEmail] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchFeaturedContent();
+  }, []);
+
+  const fetchFeaturedContent = async () => {
+    // Fetch featured artworks with artist info
+    const { data: artworks } = await supabase
+      .from('artworks')
+      .select(`
+        id,
+        title,
+        slug,
+        primary_image_url,
+        price_usd,
+        edition_total,
+        artists (name)
+      `)
+      .eq('status', 'published')
+      .order('created_at', { ascending: false })
+      .limit(3);
+
+    if (artworks) {
+      setFeaturedArtworks(
+        artworks.map(a => ({
+          id: a.id,
+          title: a.title,
+          artistName: a.artists?.name || 'Unknown Artist',
+          image: a.primary_image_url || 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=800&q=80',
+          price: a.price_usd ? `$${a.price_usd}` : 'Price on request',
+          edition: a.edition_total === 1 ? '1/1' : `Edition of ${a.edition_total}`,
+        }))
+      );
+    }
+
+    // Fetch featured artist
+    const { data: artist } = await supabase
+      .from('artists')
+      .select('*')
+      .eq('is_featured', true)
+      .single();
+
+    if (artist) {
+      setFeaturedArtist(artist);
+    }
+  };
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubscribing(true);
+
+    try {
+      const validated = emailSchema.parse(email);
+      
+      const { error } = await supabase
+        .from('newsletter_subscribers')
+        .insert({ email: validated });
+
+      if (error) {
+        if (error.code === '23505') {
+          toast({
+            title: "Already subscribed",
+            description: "This email is already on our list!",
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        toast({
+          title: "Success!",
+          description: "You've been added to our newsletter.",
+        });
+        setEmail("");
+      }
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Invalid email",
+          description: "Please enter a valid email address",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ArtGallery",
+    "name": "Monarch Gallery",
+    "description": "A curated platform showcasing digital and physical artworks from visionary artists",
+    "url": window.location.origin,
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Home - Curated Art Marketplace"
+        description="Discover unique artworks from visionary artists. Buy digital and physical art, connect with creators, and build your collection at Monarch Gallery."
+        keywords="art marketplace, buy art online, digital art, NFT art, contemporary artists, art collectors"
+        structuredData={structuredData}
+      />
       <Header />
       
       <main className="flex-1">
-        {/* Hero Section */}
         <section className="pt-32 pb-24 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center space-y-8">
@@ -64,7 +156,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Featured Artworks */}
         <section className="py-24 border-t border-border">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-end mb-12">
@@ -80,24 +171,30 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-              {featuredArtworks.map((artwork) => (
-                <ArtworkCard key={artwork.id} {...artwork} />
-              ))}
+              {featuredArtworks.length > 0 ? (
+                featuredArtworks.map((artwork) => (
+                  <ArtworkCard key={artwork.id} {...artwork} />
+                ))
+              ) : (
+                <p className="col-span-3 text-center text-muted-foreground">
+                  No artworks available yet
+                </p>
+              )}
             </div>
           </div>
         </section>
 
-        {/* Featured Artist */}
-        <FeaturedArtist
-          name="Sarah Chen"
-          title="Digital Etherealism"
-          bio="Sarah Chen explores the intersection of technology and emotion through her ethereal digital compositions. Her work has been featured in galleries worldwide and collected by major institutions."
-          image="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80"
-          artworkCount={24}
-          slug="sarah-chen"
-        />
+        {featuredArtist && (
+          <FeaturedArtist
+            name={featuredArtist.name}
+            title={featuredArtist.specialty || 'Artist'}
+            bio={featuredArtist.bio || 'Featured artist at Monarch Gallery'}
+            image={featuredArtist.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80'}
+            artworkCount={featuredArtist.artwork_count || 0}
+            slug={featuredArtist.slug}
+          />
+        )}
 
-        {/* CTA Section */}
         <section className="py-24 border-t border-border">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl md:text-5xl font-serif font-medium mb-6">
@@ -106,14 +203,19 @@ const Index = () => {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
               Be the first to discover new releases and artist stories
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-              <input
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+              <Input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="flex-1"
               />
-              <Button size="lg">Subscribe</Button>
-            </div>
+              <Button size="lg" type="submit" disabled={subscribing}>
+                {subscribing ? 'Subscribing...' : 'Subscribe'}
+              </Button>
+            </form>
           </div>
         </section>
       </main>

@@ -1,11 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Search } from "lucide-react";
+import { Menu, Search, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
+import WalletConnect from "@/components/WalletConnect";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, isAdmin, signOut } = useAuth();
 
   const navLinks = [
     { label: "Explore", href: "/explore" },
@@ -18,12 +28,10 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <Link to="/" className="text-xl font-serif font-medium tracking-tight hover:opacity-70 transition-opacity">
             monarch
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
@@ -36,16 +44,47 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Right Actions */}
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" className="hidden sm:flex">
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="sm" className="hidden md:flex">
-              Sign In
-            </Button>
+            
+            {user ? (
+              <>
+                <WalletConnect />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild className="hidden md:flex">
+                    <Button variant="ghost" size="sm">
+                      Account
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin">
+                            <Settings className="w-4 h-4 mr-2" />
+                            Admin Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
+                    <DropdownMenuItem onClick={signOut}>
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <Link to="/auth" className="hidden md:block">
+                <Button variant="ghost" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+            )}
 
-            {/* Mobile Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild className="md:hidden">
                 <Button variant="ghost" size="icon">
@@ -65,11 +104,26 @@ const Header = () => {
                     </Link>
                   ))}
                   <div className="pt-6 border-t border-border">
-                    <Link to="/signin" onClick={() => setIsOpen(false)}>
-                      <Button variant="default" className="w-full">
-                        Sign In
-                      </Button>
-                    </Link>
+                    {user ? (
+                      <div className="space-y-4">
+                        {isAdmin && (
+                          <Link to="/admin" onClick={() => setIsOpen(false)}>
+                            <Button variant="outline" className="w-full">
+                              Admin Dashboard
+                            </Button>
+                          </Link>
+                        )}
+                        <Button variant="default" className="w-full" onClick={signOut}>
+                          Sign Out
+                        </Button>
+                      </div>
+                    ) : (
+                      <Link to="/auth" onClick={() => setIsOpen(false)}>
+                        <Button variant="default" className="w-full">
+                          Sign In
+                        </Button>
+                      </Link>
+                    )}
                   </div>
                 </nav>
               </SheetContent>
