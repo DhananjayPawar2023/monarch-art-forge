@@ -12,6 +12,9 @@ import Collections from "./pages/Collections";
 import About from "./pages/About";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
+import ForArtists from "./pages/ForArtists";
+import ForCollectors from "./pages/ForCollectors";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +35,9 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/for-artists" element={<ForArtists />} />
+              <Route path="/for-collectors" element={<ForCollectors />} />
+              <Route path="/contact" element={<Contact />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
