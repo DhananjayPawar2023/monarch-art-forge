@@ -1,70 +1,127 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import ArtworkCard from "@/components/ArtworkCard";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface Artwork {
+  id: string;
+  title: string;
+  slug: string;
+  primary_image_url: string | null;
+  price_usd: number | null;
+  edition_total: number | null;
+  medium: string | null;
+  tags: string[] | null;
+  artists: {
+    name: string;
+  };
+}
 
 const Explore = () => {
+  const { toast } = useToast();
+  const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("newest");
+  const [filterMedium, setFilterMedium] = useState<string>("all");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const itemsPerPage = 12;
 
-  // Mock data
-  const artworks = [
-    {
-      id: "1",
-      title: "Ethereal Horizons",
-      artistName: "Sarah Chen",
-      image: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=800&q=80",
-      price: "$2,400",
-      edition: "1/1"
-    },
-    {
-      id: "2",
-      title: "Digital Dreams",
-      artistName: "Marcus Rivera",
-      image: "https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=800&q=80",
-      price: "$1,800",
-      edition: "Edition of 5"
-    },
-    {
-      id: "3",
-      title: "Chromatic Visions",
-      artistName: "Elena Volkov",
-      image: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800&q=80",
-      price: "$3,200",
-      edition: "1/1"
-    },
-    {
-      id: "4",
-      title: "Abstract Resonance",
-      artistName: "James Park",
-      image: "https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=800&q=80",
-      price: "$2,900",
-      edition: "Edition of 3"
-    },
-    {
-      id: "5",
-      title: "Minimal Essence",
-      artistName: "Yuki Tanaka",
-      image: "https://images.unsplash.com/photo-1544967082-d9d25d867eeb?w=800&q=80",
-      price: "$1,500",
-      edition: "Edition of 10"
-    },
-    {
-      id: "6",
-      title: "Urban Poetry",
-      artistName: "Diego Santos",
-      image: "https://images.unsplash.com/photo-1577083552431-6e5fd01988ec?w=800&q=80",
-      price: "$2,100",
-      edition: "1/1"
-    },
-  ];
+  const fetchArtworks = async (loadMore = false) => {
+    try {
+      setLoading(true);
+      const currentPage = loadMore ? page : 1;
+      const from = (currentPage - 1) * itemsPerPage;
+      const to = from + itemsPerPage - 1;
+
+      let query = supabase
+        .from("artworks")
+        .select(`
+          id,
+          title,
+          slug,
+          primary_image_url,
+          price_usd,
+          edition_total,
+          medium,
+          tags,
+          created_at,
+          view_count,
+          artists (name)
+        `, { count: 'exact' })
+        .eq("status", "published")
+        .range(from, to);
+
+      // Apply medium filter
+      if (filterMedium !== "all") {
+        query = query.ilike("medium", `%${filterMedium}%`);
+      }
+
+      // Apply sorting
+      switch (sortBy) {
+        case "price-low":
+          query = query.order("price_usd", { ascending: true, nullsFirst: false });
+          break;
+        case "price-high":
+          query = query.order("price_usd", { ascending: false, nullsFirst: false });
+          break;
+        case "popular":
+          query = query.order("view_count", { ascending: false });
+          break;
+        default: // newest
+          query = query.order("created_at", { ascending: false });
+      }
+
+      const { data, error, count } = await query;
+
+      if (error) throw error;
+
+      if (loadMore) {
+        setArtworks((prev) => [...prev, ...(data || [])]);
+      } else {
+        setArtworks(data || []);
+      }
+
+      setHasMore(count ? from + itemsPerPage < count : false);
+    } catch (error: any) {
+      console.error("Error fetching artworks:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load artworks",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setPage(1);
+    fetchArtworks(false);
+  }, [sortBy, filterMedium]);
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchArtworks(true);
+  };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      
-      <main className="flex-1 pt-16">
+    <>
+      <SEO 
+        title="Explore Artworks"
+        description="Discover curated artworks from emerging and established artists. Browse paintings, digital art, photography, and sculpture."
+      />
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        
+        <main className="flex-1 pt-16">
         {/* Hero */}
         <section className="py-16 border-b border-border">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -82,11 +139,41 @@ const Explore = () => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex flex-wrap gap-2">
-                <Button variant="outline" size="sm">All</Button>
-                <Button variant="ghost" size="sm">Paintings</Button>
-                <Button variant="ghost" size="sm">Digital</Button>
-                <Button variant="ghost" size="sm">Photography</Button>
-                <Button variant="ghost" size="sm">Sculpture</Button>
+                <Button 
+                  variant={filterMedium === "all" ? "outline" : "ghost"} 
+                  size="sm"
+                  onClick={() => setFilterMedium("all")}
+                >
+                  All
+                </Button>
+                <Button 
+                  variant={filterMedium === "painting" ? "outline" : "ghost"} 
+                  size="sm"
+                  onClick={() => setFilterMedium("painting")}
+                >
+                  Paintings
+                </Button>
+                <Button 
+                  variant={filterMedium === "digital" ? "outline" : "ghost"} 
+                  size="sm"
+                  onClick={() => setFilterMedium("digital")}
+                >
+                  Digital
+                </Button>
+                <Button 
+                  variant={filterMedium === "photography" ? "outline" : "ghost"} 
+                  size="sm"
+                  onClick={() => setFilterMedium("photography")}
+                >
+                  Photography
+                </Button>
+                <Button 
+                  variant={filterMedium === "sculpture" ? "outline" : "ghost"} 
+                  size="sm"
+                  onClick={() => setFilterMedium("sculpture")}
+                >
+                  Sculpture
+                </Button>
               </div>
               
               <Select value={sortBy} onValueChange={setSortBy}>
@@ -107,23 +194,59 @@ const Explore = () => {
         {/* Artworks Grid */}
         <section className="py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-              {artworks.map((artwork) => (
-                <ArtworkCard key={artwork.id} {...artwork} />
-              ))}
-            </div>
-            
-            <div className="mt-16 text-center">
-              <Button variant="outline" size="lg">
-                Load More
-              </Button>
-            </div>
+            {loading && artworks.length === 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="space-y-4">
+                    <Skeleton className="aspect-square w-full" />
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                ))}
+              </div>
+            ) : artworks.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">
+                  No artworks found. Try adjusting your filters.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                  {artworks.map((artwork) => (
+                    <ArtworkCard 
+                      key={artwork.id}
+                      id={artwork.id}
+                      title={artwork.title}
+                      artistName={artwork.artists.name}
+                      image={artwork.primary_image_url || ""}
+                      price={artwork.price_usd ? `$${artwork.price_usd.toLocaleString()}` : undefined}
+                      edition={artwork.edition_total === 1 ? "1/1" : `Edition of ${artwork.edition_total}`}
+                    />
+                  ))}
+                </div>
+                
+                {hasMore && (
+                  <div className="mt-16 text-center">
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      onClick={handleLoadMore}
+                      disabled={loading}
+                    >
+                      {loading ? 'Loading...' : 'Load More'}
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </section>
-      </main>
+        </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 };
 

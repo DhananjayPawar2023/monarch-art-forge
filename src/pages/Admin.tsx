@@ -122,6 +122,47 @@ const Admin = () => {
     }
   };
 
+  const handleCreateCollection = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setUploading(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const file = formData.get('cover_image') as File;
+
+      let coverImageUrl = null;
+      if (file && file.size > 0) {
+        coverImageUrl = await handleImageUpload(file);
+      }
+
+      const { error } = await supabase.from('collections').insert({
+        title: formData.get('title') as string,
+        slug: (formData.get('title') as string).toLowerCase().replace(/\s+/g, '-'),
+        description: formData.get('description') as string,
+        curator_name: formData.get('curator_name') as string || null,
+        cover_image_url: coverImageUrl,
+        published_at: new Date().toISOString(),
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success!",
+        description: "Collection created successfully",
+      });
+
+      (e.target as HTMLFormElement).reset();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <ProtectedRoute requireAdmin>
       <div className="min-h-screen flex flex-col">
@@ -225,11 +266,36 @@ const Admin = () => {
             <TabsContent value="collections">
               <Card>
                 <CardHeader>
-                  <CardTitle>Manage Collections</CardTitle>
-                  <CardDescription>Create and manage artwork collections</CardDescription>
+                  <CardTitle>Create New Collection</CardTitle>
+                  <CardDescription>Curate and publish artwork collections</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">Collection management coming soon...</p>
+                  <form onSubmit={handleCreateCollection} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="collection-title">Collection Title</Label>
+                      <Input id="collection-title" name="title" required />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="curator-name">Curator Name</Label>
+                      <Input id="curator-name" name="curator_name" placeholder="Optional" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="collection-description">Description</Label>
+                      <Textarea id="collection-description" name="description" rows={6} />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="cover-image">Cover Image</Label>
+                      <Input id="cover-image" name="cover_image" type="file" accept="image/*" />
+                    </div>
+
+                    <Button type="submit" disabled={uploading} className="w-full">
+                      <Plus className="w-4 h-4 mr-2" />
+                      {uploading ? 'Creating...' : 'Create Collection'}
+                    </Button>
+                  </form>
                 </CardContent>
               </Card>
             </TabsContent>
