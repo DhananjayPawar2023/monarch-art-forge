@@ -1,23 +1,41 @@
-import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { Upload, Plus } from 'lucide-react';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { uploadToIPFS, generateMetadata } from "@/utils/nft";
+import { Upload, Plus } from "lucide-react";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Admin = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
+  const [artists, setArtists] = useState<any[]>([]);
+  const [minting, setMinting] = useState(false);
+
+  useEffect(() => {
+    fetchArtists();
+  }, []);
+
+  const fetchArtists = async () => {
+    const { data } = await supabase
+      .from('artists')
+      .select('id, name')
+      .order('name');
+    if (data) setArtists(data);
+  };
 
   const handleImageUpload = async (file: File) => {
     const fileExt = file.name.split('.').pop();
@@ -37,6 +55,53 @@ const Admin = () => {
     return publicUrl;
   };
 
+  const handleMintNFT = async (artworkId: string) => {
+    setMinting(true);
+    try {
+      const { data: artwork } = await supabase
+        .from('artworks')
+        .select('*, artists(name)')
+        .eq('id', artworkId)
+        .single();
+
+      if (!artwork) throw new Error('Artwork not found');
+
+      const metadata = generateMetadata({
+        title: artwork.title,
+        description: artwork.description || '',
+        artistName: artwork.artists?.name || 'Unknown',
+        imageUrl: artwork.primary_image_url || '',
+        attributes: {
+          medium: artwork.medium,
+          year: artwork.year,
+        },
+      });
+
+      const ipfsUrl = await uploadToIPFS(metadata);
+
+      await supabase
+        .from('artworks')
+        .update({
+          ipfs_metadata_url: ipfsUrl,
+          token_id: `${Date.now()}`,
+        })
+        .eq('id', artworkId);
+
+      toast({
+        title: "NFT metadata uploaded!",
+        description: "Metadata has been stored on IPFS",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Minting error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setMinting(false);
+    }
+  };
+
   const handleCreateArtwork = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setUploading(true);
@@ -50,23 +115,40 @@ const Admin = () => {
       }
 
       const imageUrl = await handleImageUpload(file);
+      const isNft = formData.get('is_nft') === 'on';
 
-      const { error } = await supabase.from('artworks').insert({
+      const artworkData: any = {
         title: formData.get('title') as string,
         slug: (formData.get('title') as string).toLowerCase().replace(/\s+/g, '-'),
         description: formData.get('description') as string,
         primary_image_url: imageUrl,
         price_usd: parseFloat(formData.get('price') as string),
+        price_eth: formData.get('price_eth') ? parseFloat(formData.get('price_eth') as string) : null,
         medium: formData.get('medium') as string,
         artist_id: formData.get('artist_id') as string,
         status: 'published',
-      });
+        is_nft: isNft,
+      };
+
+      if (isNft) {
+        artworkData.chain = formData.get('chain') as string || 'ethereum';
+      }
+
+      const { data, error } = await supabase
+        .from('artworks')
+        .insert(artworkData)
+        .select()
+        .single();
 
       if (error) throw error;
 
+      if (isNft && data) {
+        await handleMintNFT(data.id);
+      }
+
       toast({
         title: "Success!",
-        description: "Artwork created successfully",
+        description: isNft ? "Artwork created and NFT minting initiated" : "Artwork created successfully",
       });
 
       (e.target as HTMLFormElement).reset();
@@ -111,6 +193,7 @@ const Admin = () => {
       });
 
       (e.target as HTMLFormElement).reset();
+      fetchArtists();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -166,9 +249,10 @@ const Admin = () => {
   return (
     <ProtectedRoute requireAdmin>
       <div className="min-h-screen flex flex-col">
+        <SEO title="Admin Dashboard" description="Manage artworks, artists, and collections" />
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-12">
-          <h1 className="text-4xl font-serif font-medium mb-8">Admin Dashboard</h1>
+        <main className="flex-1 container mx-auto px-4 py-32">
+          <h1 className="text-5xl font-serif font-medium mb-12">Admin Dashboard</h1>
 
           <Tabs defaultValue="artworks" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
@@ -184,7 +268,7 @@ const Admin = () => {
                   <CardDescription>Upload and publish new artworks to the gallery</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleCreateArtwork} className="space-y-4">
+                  <form onSubmit={handleCreateArtwork} className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="title">Title</Label>
                       <Input id="title" name="title" required />
@@ -195,6 +279,22 @@ const Admin = () => {
                       <Textarea id="description" name="description" rows={4} />
                     </div>
 
+                    <div className="space-y-2">
+                      <Label htmlFor="artist_id">Artist</Label>
+                      <Select name="artist_id" required>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select artist" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {artists.map((artist) => (
+                            <SelectItem key={artist.id} value={artist.id}>
+                              {artist.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="price">Price (USD)</Label>
@@ -202,14 +302,14 @@ const Admin = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="medium">Medium</Label>
-                        <Input id="medium" name="medium" placeholder="e.g. Oil on Canvas" />
+                        <Label htmlFor="price_eth">Price (ETH)</Label>
+                        <Input id="price_eth" name="price_eth" type="number" step="0.001" />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="artist_id">Artist ID</Label>
-                      <Input id="artist_id" name="artist_id" placeholder="UUID of the artist" required />
+                      <Label htmlFor="medium">Medium</Label>
+                      <Input id="medium" name="medium" placeholder="e.g. Oil on Canvas" />
                     </div>
 
                     <div className="space-y-2">
@@ -217,9 +317,28 @@ const Admin = () => {
                       <Input id="image" name="image" type="file" accept="image/*" required />
                     </div>
 
-                    <Button type="submit" disabled={uploading} className="w-full">
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" id="is_nft" name="is_nft" className="rounded" />
+                      <Label htmlFor="is_nft">Mint as NFT</Label>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="chain">Blockchain</Label>
+                      <Select name="chain">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select blockchain" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ethereum">Ethereum</SelectItem>
+                          <SelectItem value="polygon">Polygon</SelectItem>
+                          <SelectItem value="goerli">Goerli (Testnet)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <Button type="submit" disabled={uploading || minting} className="w-full">
                       <Upload className="w-4 h-4 mr-2" />
-                      {uploading ? 'Uploading...' : 'Create Artwork'}
+                      {uploading ? 'Uploading...' : minting ? 'Minting NFT...' : 'Create Artwork'}
                     </Button>
                   </form>
                 </CardContent>

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, Search, LogOut, Settings } from "lucide-react";
+import { Menu, Search, LogOut, Settings, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
+import { useCart } from "@/contexts/CartContext";
 import WalletConnect from "@/components/WalletConnect";
 import {
   DropdownMenu,
@@ -16,6 +18,7 @@ import {
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, isAdmin, signOut } = useAuth();
+  const { totalItems } = useCart();
 
   const navLinks = [
     { label: "Explore", href: "/explore" },
@@ -52,6 +55,20 @@ const Header = () => {
               <Search className="h-5 w-5" />
             </Button>
             
+            <Link to="/cart" className="relative">
+              <Button variant="ghost" size="icon">
+                <ShoppingCart className="h-5 w-5" />
+                {totalItems > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                  >
+                    {totalItems}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
+            
             {user ? (
               <>
                 <WalletConnect />
@@ -62,17 +79,23 @@ const Header = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile">
+                        My Profile
+                      </Link>
+                    </DropdownMenuItem>
                     {isAdmin && (
                       <>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                           <Link to="/admin">
                             <Settings className="w-4 h-4 mr-2" />
                             Admin Dashboard
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
                       </>
                     )}
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={signOut}>
                       <LogOut className="w-4 h-4 mr-2" />
                       Sign Out
@@ -109,6 +132,11 @@ const Header = () => {
                   <div className="pt-6 border-t border-border">
                     {user ? (
                       <div className="space-y-4">
+                        <Link to="/profile" onClick={() => setIsOpen(false)}>
+                          <Button variant="outline" className="w-full">
+                            My Profile
+                          </Button>
+                        </Link>
                         {isAdmin && (
                           <Link to="/admin" onClick={() => setIsOpen(false)}>
                             <Button variant="outline" className="w-full">

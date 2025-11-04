@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/hooks/useAuth";
+import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
 import Explore from "./pages/Explore";
 import Artists from "./pages/Artists";
@@ -15,6 +16,9 @@ import Admin from "./pages/Admin";
 import ForArtists from "./pages/ForArtists";
 import ForCollectors from "./pages/ForCollectors";
 import Contact from "./pages/Contact";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import Profile from "./pages/Profile";
 import ArtworkDetail from "./pages/ArtworkDetail";
 import ArtistDetail from "./pages/ArtistDetail";
 import CollectionDetail from "./pages/CollectionDetail";
@@ -30,23 +34,28 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/explore" element={<Explore />} />
-              <Route path="/artists" element={<Artists />} />
-              <Route path="/collections" element={<Collections />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/for-artists" element={<ForArtists />} />
-              <Route path="/for-collectors" element={<ForCollectors />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/artwork/:id" element={<ArtworkDetail />} />
-              <Route path="/artist/:slug" element={<ArtistDetail />} />
-              <Route path="/collection/:slug" element={<CollectionDetail />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <CartProvider>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/explore" element={<Explore />} />
+                <Route path="/artists" element={<Artists />} />
+                <Route path="/collections" element={<Collections />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/for-artists" element={<ForArtists />} />
+                <Route path="/for-collectors" element={<ForCollectors />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/artwork/:id" element={<ArtworkDetail />} />
+                <Route path="/artist/:slug" element={<ArtistDetail />} />
+                <Route path="/collection/:slug" element={<CollectionDetail />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </CartProvider>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
