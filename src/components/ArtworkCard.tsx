@@ -4,17 +4,23 @@ interface ArtworkCardProps {
   id: string;
   title: string;
   artistName: string;
-  image: string;
+  artistSlug?: string;
+  imageUrl?: string;
+  image?: string;
   price?: string;
+  priceUsd?: number | null;
   edition?: string;
 }
 
-const ArtworkCard = ({ id, title, artistName, image, price, edition }: ArtworkCardProps) => {
+const ArtworkCard = ({ id, title, artistName, image, imageUrl, price, priceUsd, edition }: ArtworkCardProps) => {
+  const displayImage = imageUrl || image || '';
+  const displayPrice = price || (priceUsd ? `$${priceUsd.toLocaleString()}` : undefined);
+
   return (
     <Link to={`/artwork/${id}`} className="group block">
       <div className="relative aspect-square overflow-hidden bg-muted mb-4">
         <img
-          src={image}
+          src={displayImage || 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=800&q=80'}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -24,8 +30,8 @@ const ArtworkCard = ({ id, title, artistName, image, price, edition }: ArtworkCa
           {title}
         </h3>
         <p className="text-sm text-muted-foreground">{artistName}</p>
-        {price && (
-          <p className="text-sm font-medium">{price} {edition && <span className="text-muted-foreground">· {edition}</span>}</p>
+        {displayPrice && (
+          <p className="text-sm font-medium">{displayPrice} {edition && <span className="text-muted-foreground">· {edition}</span>}</p>
         )}
       </div>
     </Link>

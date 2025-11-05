@@ -13,12 +13,14 @@ import Collections from "./pages/Collections";
 import About from "./pages/About";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
+import AdminArtworks from "./pages/AdminArtworks";
 import ForArtists from "./pages/ForArtists";
 import ForCollectors from "./pages/ForCollectors";
 import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
+import Wishlist from "./pages/Wishlist";
 import ArtworkDetail from "./pages/ArtworkDetail";
 import ArtistDetail from "./pages/ArtistDetail";
 import CollectionDetail from "./pages/CollectionDetail";
@@ -43,12 +45,14 @@ const App = () => (
                 <Route path="/about" element={<About />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/artworks" element={<AdminArtworks />} />
                 <Route path="/for-artists" element={<ForArtists />} />
                 <Route path="/for-collectors" element={<ForCollectors />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/artwork/:id" element={<ArtworkDetail />} />
                 <Route path="/artist/:slug" element={<ArtistDetail />} />
                 <Route path="/collection/:slug" element={<CollectionDetail />} />

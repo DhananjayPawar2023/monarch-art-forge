@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -252,7 +252,12 @@ const Admin = () => {
         <SEO title="Admin Dashboard" description="Manage artworks, artists, and collections" />
         <Header />
         <main className="flex-1 container mx-auto px-4 py-32">
-          <h1 className="text-5xl font-serif font-medium mb-12">Admin Dashboard</h1>
+          <div className="flex justify-between items-center mb-12">
+            <h1 className="text-5xl font-serif font-medium">Admin Dashboard</h1>
+            <Link to="/admin/artworks">
+              <Button variant="outline">Manage Artworks</Button>
+            </Link>
+          </div>
 
           <Tabs defaultValue="artworks" className="w-full">
             <TabsList className="grid w-full grid-cols-3">

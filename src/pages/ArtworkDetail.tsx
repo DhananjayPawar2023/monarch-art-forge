@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/hooks/useAuth";
+import { Heart } from "lucide-react";
 
 interface Artwork {
   id: string;
@@ -40,10 +41,15 @@ const ArtworkDetail = () => {
   const { user } = useAuth();
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [loading, setLoading] = useState(true);
+  const [inWishlist, setInWishlist] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
 
   useEffect(() => {
     fetchArtwork();
-  }, [id]);
+    if (user) {
+      checkWishlist();
+    }
+  }, [id, user]);
 
   const fetchArtwork = async () => {
     try {
@@ -63,6 +69,76 @@ const ArtworkDetail = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkWishlist = async () => {
+    if (!user) return;
+
+    try {
+      const { data } = await supabase
+        .from('wishlist')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('artwork_id', id)
+        .single();
+
+      setInWishlist(!!data);
+    } catch (error) {
+      // Not in wishlist
+      setInWishlist(false);
+    }
+  };
+
+  const toggleWishlist = async () => {
+    if (!user) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be signed in to save favorites",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setWishlistLoading(true);
+
+    try {
+      if (inWishlist) {
+        // Remove from wishlist
+        await supabase
+          .from('wishlist')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('artwork_id', id);
+
+        setInWishlist(false);
+        toast({
+          title: "Removed from wishlist",
+          description: "The artwork has been removed from your favorites",
+        });
+      } else {
+        // Add to wishlist
+        await supabase
+          .from('wishlist')
+          .insert({
+            user_id: user.id,
+            artwork_id: id,
+          });
+
+        setInWishlist(true);
+        toast({
+          title: "Added to wishlist",
+          description: "The artwork has been saved to your favorites",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setWishlistLoading(false);
     }
   };
 
@@ -241,8 +317,13 @@ const ArtworkDetail = () => {
                     >
                       Add to Cart
                     </Button>
-                    <Button size="lg" variant="outline">
-                      Favorite
+                    <Button 
+                      size="lg" 
+                      variant="outline"
+                      onClick={toggleWishlist}
+                      disabled={wishlistLoading}
+                    >
+                      <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />
                     </Button>
                   </div>
                 ) : (

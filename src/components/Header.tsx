@@ -79,9 +79,14 @@ const Header = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild>
                       <Link to="/profile">
                         My Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/wishlist">
+                        My Wishlist
                       </Link>
                     </DropdownMenuItem>
                     {isAdmin && (
