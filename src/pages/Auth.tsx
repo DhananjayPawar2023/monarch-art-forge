@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
+import { Wallet } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 const signUpSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -22,9 +24,10 @@ const signInSchema = z.object({
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { signUp, signIn } = useAuth();
+  const { signUp, signIn, signInWithWallet } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [walletLoading, setWalletLoading] = useState(false);
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -99,6 +102,46 @@ const Auth = () => {
     }
   };
 
+  const handleWalletSignIn = async () => {
+    if (!window.ethereum) {
+      toast({
+        title: "MetaMask not found",
+        description: "Please install MetaMask to connect with your wallet",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setWalletLoading(true);
+
+    try {
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+
+      const address = accounts[0];
+      const { error } = await signInWithWallet(address);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        navigate('/');
+      }
+    } catch (error: any) {
+      toast({
+        title: "Connection failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setWalletLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
@@ -107,6 +150,24 @@ const Auth = () => {
           <CardDescription>Sign in to your account or create a new one</CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="mb-6">
+            <Button 
+              onClick={handleWalletSignIn} 
+              disabled={walletLoading}
+              variant="outline"
+              className="w-full gap-2"
+            >
+              <Wallet className="w-5 h-5" />
+              {walletLoading ? 'Connecting...' : 'Connect with Wallet'}
+            </Button>
+            <div className="relative my-6">
+              <Separator />
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-xs text-muted-foreground">
+                Or continue with email
+              </span>
+            </div>
+          </div>
+
           <Tabs defaultValue="signin">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Sign In</TabsTrigger>

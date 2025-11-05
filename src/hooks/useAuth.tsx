@@ -12,6 +12,7 @@ interface AuthContextType {
   loading: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signInWithWallet: (address: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   connectWallet: (address: string) => Promise<void>;
 }
@@ -135,6 +136,69 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const signInWithWallet = async (address: string) => {
+    try {
+      // Check if profile with this wallet exists
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id, email')
+        .eq('wallet_address', address)
+        .single();
+
+      if (profile) {
+        // Sign in with magic link if profile exists
+        const { error } = await supabase.auth.signInWithOtp({
+          email: profile.email!,
+          options: {
+            shouldCreateUser: false
+          }
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Check your email",
+          description: "We've sent you a login link",
+        });
+        
+        return { error: null };
+      } else {
+        // Create new account with wallet
+        const email = `${address.toLowerCase()}@wallet.monarch`;
+        const password = `wallet_${address}_${Date.now()}`;
+
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`,
+            data: {
+              full_name: `User ${address.slice(0, 6)}`,
+              wallet_address: address
+            }
+          }
+        });
+
+        if (signUpError) throw signUpError;
+
+        // Update profile with wallet address
+        await supabase
+          .from('profiles')
+          .update({ wallet_address: address })
+          .eq('email', email);
+
+        toast({
+          title: "Account created!",
+          description: "Your wallet has been connected successfully",
+        });
+
+        return { error: null };
+      }
+    } catch (error: any) {
+      return { error };
+    }
+  };
+
   const connectWallet = async (address: string) => {
     if (!user) return;
 
@@ -157,6 +221,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loading,
     signUp,
     signIn,
+    signInWithWallet,
     signOut,
     connectWallet,
   };
