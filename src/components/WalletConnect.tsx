@@ -4,12 +4,6 @@ import { Wallet } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
-declare global {
-  interface Window {
-    ethereum?: any;
-  }
-}
-
 const WalletConnect = () => {
   const { user, connectWallet } = useAuth();
   const { toast } = useToast();

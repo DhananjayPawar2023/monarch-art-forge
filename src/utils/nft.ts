@@ -1,12 +1,6 @@
 // NFT and blockchain utilities
 import { ethers } from 'ethers';
 
-declare global {
-  interface Window {
-    ethereum?: any;
-  }
-}
-
 // Simple ERC-721 mint function ABI
 const MINT_ABI = [
   "function mint(address to, uint256 tokenId, string memory uri) public returns (uint256)"

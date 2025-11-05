@@ -1,12 +1,6 @@
 // Cryptocurrency payment utilities
 import { ethers } from 'ethers';
 
-declare global {
-  interface Window {
-    ethereum?: any;
-  }
-}
-
 export const processCryptoPayment = async (
   recipientAddress: string,
   amountEth: number,
