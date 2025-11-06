@@ -1,49 +1,100 @@
 // NFT and blockchain utilities
 import { ethers } from 'ethers';
 
-// Simple ERC-721 mint function ABI
-const MINT_ABI = [
-  "function mint(address to, uint256 tokenId, string memory uri) public returns (uint256)"
+// ERC-721 NFT Contract ABI
+const ERC721_ABI = [
+  "function mint(address to, string memory uri) public returns (uint256)",
+  "function safeMint(address to, string memory uri) public returns (uint256)",
+  "function setRoyaltyInfo(uint256 tokenId, address recipient, uint96 feeNumerator) public",
+  "function transferFrom(address from, address to, uint256 tokenId) public",
+  "function ownerOf(uint256 tokenId) public view returns (address)",
+  "function tokenURI(uint256 tokenId) public view returns (string memory)",
+  "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)"
 ];
+
+// Default NFT contract addresses for different chains
+export const NFT_CONTRACTS: Record<number, string> = {
+  1: '0x0000000000000000000000000000000000000000', // Ethereum Mainnet - Replace with your contract
+  5: '0x0000000000000000000000000000000000000000', // Goerli Testnet - Replace with your contract
+  137: '0x0000000000000000000000000000000000000000', // Polygon - Replace with your contract
+  80001: '0x0000000000000000000000000000000000000000', // Mumbai Testnet - Replace with your contract
+};
 
 export const mintNFT = async (
   contractAddress: string,
-  tokenId: string,
   metadataUrl: string,
-  walletAddress: string
+  walletAddress: string,
+  royaltyPercentage: number = 10
 ) => {
   if (!window.ethereum) {
-    throw new Error('MetaMask not installed');
+    throw new Error('MetaMask not installed. Please install MetaMask to mint NFTs.');
   }
 
   try {
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
-    const contract = new ethers.Contract(contractAddress, MINT_ABI, signer);
+    
+    // Verify network
+    const network = await provider.getNetwork();
+    console.log('Connected to network:', network.chainId);
+    
+    const contract = new ethers.Contract(contractAddress, ERC721_ABI, signer);
 
-    // Call the mint function on the smart contract
-    const tx = await contract.mint(walletAddress, tokenId, metadataUrl);
-    const receipt = await tx.wait();
+    // Mint the NFT
+    console.log('Minting NFT to:', walletAddress);
+    const mintTx = await contract.safeMint(walletAddress, metadataUrl);
+    console.log('Mint transaction sent:', mintTx.hash);
+    
+    const receipt = await mintTx.wait();
+    console.log('Mint transaction confirmed:', receipt);
+
+    // Extract token ID from Transfer event
+    let tokenId = '0';
+    if (receipt?.logs) {
+      const transferEvent = receipt.logs.find((log: any) => {
+        try {
+          const parsed = contract.interface.parseLog(log);
+          return parsed?.name === 'Transfer';
+        } catch {
+          return false;
+        }
+      });
+      
+      if (transferEvent) {
+        const parsed = contract.interface.parseLog(transferEvent);
+        tokenId = parsed?.args?.tokenId?.toString() || '0';
+      }
+    }
+
+    // Set royalty (EIP-2981 standard)
+    if (royaltyPercentage > 0) {
+      try {
+        const royaltyFeeNumerator = Math.floor((royaltyPercentage * 10000) / 100); // Convert to basis points
+        const royaltyTx = await contract.setRoyaltyInfo(tokenId, walletAddress, royaltyFeeNumerator);
+        await royaltyTx.wait();
+        console.log('Royalty info set:', royaltyPercentage + '%');
+      } catch (royaltyError) {
+        console.warn('Failed to set royalty info:', royaltyError);
+      }
+    }
 
     return {
-      transactionHash: receipt.hash,
+      transactionHash: receipt?.hash || mintTx.hash,
       tokenId,
+      blockNumber: receipt?.blockNumber,
     };
   } catch (error: any) {
-    // Fallback to simulation for demo purposes
-    console.log('Simulating NFT mint:', {
-      contractAddress,
-      tokenId,
-      metadataUrl,
-      walletAddress,
-    });
-
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    return {
-      transactionHash: `0x${Math.random().toString(16).substring(2)}`,
-      tokenId,
-    };
+    console.error('NFT minting error:', error);
+    
+    // Provide helpful error messages
+    if (error.code === 'ACTION_REJECTED') {
+      throw new Error('Transaction was rejected. Please try again.');
+    }
+    if (error.message.includes('insufficient funds')) {
+      throw new Error('Insufficient funds to cover gas fees. Please add funds to your wallet.');
+    }
+    
+    throw new Error(error.message || 'Failed to mint NFT. Please try again.');
   }
 };
 

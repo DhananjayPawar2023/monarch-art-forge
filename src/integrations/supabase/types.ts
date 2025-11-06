@@ -119,6 +119,7 @@ export type Database = {
           collection_id: string | null
           contract_address: string | null
           created_at: string
+          current_owner_id: string | null
           description: string | null
           dimensions: string | null
           edition_available: number | null
@@ -131,6 +132,7 @@ export type Database = {
           price_eth: number | null
           price_usd: number | null
           primary_image_url: string | null
+          royalty_percentage: number | null
           slug: string
           status: Database["public"]["Enums"]["artwork_status"]
           tags: string[] | null
@@ -147,6 +149,7 @@ export type Database = {
           collection_id?: string | null
           contract_address?: string | null
           created_at?: string
+          current_owner_id?: string | null
           description?: string | null
           dimensions?: string | null
           edition_available?: number | null
@@ -159,6 +162,7 @@ export type Database = {
           price_eth?: number | null
           price_usd?: number | null
           primary_image_url?: string | null
+          royalty_percentage?: number | null
           slug: string
           status?: Database["public"]["Enums"]["artwork_status"]
           tags?: string[] | null
@@ -175,6 +179,7 @@ export type Database = {
           collection_id?: string | null
           contract_address?: string | null
           created_at?: string
+          current_owner_id?: string | null
           description?: string | null
           dimensions?: string | null
           edition_available?: number | null
@@ -187,6 +192,7 @@ export type Database = {
           price_eth?: number | null
           price_usd?: number | null
           primary_image_url?: string | null
+          royalty_percentage?: number | null
           slug?: string
           status?: Database["public"]["Enums"]["artwork_status"]
           tags?: string[] | null
@@ -252,6 +258,59 @@ export type Database = {
         }
         Relationships: []
       }
+      listings: {
+        Row: {
+          artwork_id: string
+          auction_end_at: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          listing_type: string
+          minimum_bid_usd: number | null
+          original_owner_id: string | null
+          price_eth: number | null
+          price_usd: number
+          seller_id: string
+          updated_at: string
+        }
+        Insert: {
+          artwork_id: string
+          auction_end_at?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          listing_type?: string
+          minimum_bid_usd?: number | null
+          original_owner_id?: string | null
+          price_eth?: number | null
+          price_usd: number
+          seller_id: string
+          updated_at?: string
+        }
+        Update: {
+          artwork_id?: string
+          auction_end_at?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          listing_type?: string
+          minimum_bid_usd?: number | null
+          original_owner_id?: string | null
+          price_eth?: number | null
+          price_usd?: number
+          seller_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listings_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       newsletter_subscribers: {
         Row: {
           email: string
@@ -269,6 +328,56 @@ export type Database = {
           subscribed_at?: string
         }
         Relationships: []
+      }
+      offers: {
+        Row: {
+          artwork_id: string
+          buyer_id: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          message: string | null
+          offer_amount_eth: number | null
+          offer_amount_usd: number
+          seller_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          artwork_id: string
+          buyer_id: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          message?: string | null
+          offer_amount_eth?: number | null
+          offer_amount_usd: number
+          seller_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          artwork_id?: string
+          buyer_id?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          message?: string | null
+          offer_amount_eth?: number | null
+          offer_amount_usd?: number
+          seller_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       orders: {
         Row: {
@@ -377,6 +486,56 @@ export type Database = {
           wallet_address?: string | null
         }
         Relationships: []
+      }
+      sales_history: {
+        Row: {
+          artwork_id: string
+          buyer_id: string
+          created_at: string
+          id: string
+          royalty_amount_usd: number | null
+          royalty_paid_to: string | null
+          sale_price_eth: number | null
+          sale_price_usd: number
+          sale_type: string
+          seller_id: string
+          transaction_hash: string | null
+        }
+        Insert: {
+          artwork_id: string
+          buyer_id: string
+          created_at?: string
+          id?: string
+          royalty_amount_usd?: number | null
+          royalty_paid_to?: string | null
+          sale_price_eth?: number | null
+          sale_price_usd: number
+          sale_type: string
+          seller_id: string
+          transaction_hash?: string | null
+        }
+        Update: {
+          artwork_id?: string
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          royalty_amount_usd?: number | null
+          royalty_paid_to?: string | null
+          sale_price_eth?: number | null
+          sale_price_usd?: number
+          sale_type?: string
+          seller_id?: string
+          transaction_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_history_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

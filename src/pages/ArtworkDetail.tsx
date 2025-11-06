@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import MakeOfferDialog from "@/components/MakeOfferDialog";
+import OffersList from "@/components/OffersList";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/hooks/useAuth";
-import { Heart } from "lucide-react";
+import { Heart, DollarSign } from "lucide-react";
 
 interface Artwork {
   id: string;
@@ -28,9 +31,13 @@ interface Artwork {
   chain: string | null;
   contract_address: string | null;
   token_id: string | null;
+  royalty_percentage: number | null;
+  current_owner_id: string | null;
+  artist_id: string;
   artists: {
     name: string;
     slug: string;
+    user_id: string | null;
   };
 }
 
@@ -55,7 +62,7 @@ const ArtworkDetail = () => {
     try {
       const { data, error } = await supabase
         .from('artworks')
-        .select('*, artists(name, slug)')
+        .select('*, artists(name, slug, user_id)')
         .eq('id', id)
         .single();
 
@@ -287,10 +294,15 @@ const ArtworkDetail = () => {
                       {artwork.price_eth} ETH
                     </span>
                   )}
+                  {artwork.royalty_percentage && (
+                    <span className="block text-sm text-muted-foreground mt-2">
+                      Artist royalty: {artwork.royalty_percentage}% on secondary sales
+                    </span>
+                  )}
                 </p>
                 
                 {artwork.edition_available && artwork.edition_available > 0 ? (
-                  <div className="flex gap-4">
+                  <div className="flex gap-4 mb-6">
                     <Button 
                       size="lg" 
                       className="flex-1"
@@ -317,6 +329,17 @@ const ArtworkDetail = () => {
                     >
                       Add to Cart
                     </Button>
+                    <MakeOfferDialog
+                      artworkId={artwork.id}
+                      sellerId={artwork.artists?.user_id || artwork.current_owner_id || ''}
+                      currentPriceUsd={artwork.price_usd || undefined}
+                      trigger={
+                        <Button size="lg" variant="outline" className="gap-2">
+                          <DollarSign className="w-4 h-4" />
+                          Make Offer
+                        </Button>
+                      }
+                    />
                     <Button 
                       size="lg" 
                       variant="outline"
@@ -327,10 +350,33 @@ const ArtworkDetail = () => {
                     </Button>
                   </div>
                 ) : (
-                  <Button size="lg" disabled className="w-full">
+                  <Button size="lg" disabled className="w-full mb-6">
                     Sold Out
                   </Button>
                 )}
+
+                {/* Offers Section */}
+                <Tabs defaultValue="details" className="w-full">
+                  <TabsList className="w-full">
+                    <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
+                    <TabsTrigger value="offers" className="flex-1">Offers</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="details" className="space-y-4 pt-4">
+                    <div className="text-muted-foreground">
+                      <p>Full artwork details and provenance information.</p>
+                      {artwork.is_nft && (
+                        <p className="mt-2">This artwork is minted as an NFT on {artwork.chain}.</p>
+                      )}
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="offers" className="pt-4">
+                    <OffersList
+                      artworkId={artwork.id}
+                      sellerId={artwork.artists?.user_id || artwork.current_owner_id || ''}
+                      onOfferAccepted={() => fetchArtwork()}
+                    />
+                  </TabsContent>
+                </Tabs>
               </div>
             </div>
           </div>

@@ -24,6 +24,7 @@ const Header = () => {
     { label: "Explore", href: "/explore" },
     { label: "Artists", href: "/artists" },
     { label: "Collections", href: "/collections" },
+    { label: "Secondary Market", href: "/secondary-market" },
     { label: "For Artists", href: "/for-artists" },
     { label: "For Collectors", href: "/for-collectors" },
     { label: "Contact", href: "/contact" },
@@ -87,6 +88,11 @@ const Header = () => {
                     <DropdownMenuItem asChild>
                       <Link to="/wishlist">
                         My Wishlist
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/my-listings">
+                        My Listings
                       </Link>
                     </DropdownMenuItem>
                     {isAdmin && (
