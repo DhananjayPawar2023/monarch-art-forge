@@ -14,6 +14,11 @@ import About from "./pages/About";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import AdminArtworks from "./pages/AdminArtworks";
+import AdminAnalytics from "./pages/AdminAnalytics";
+import ArtistDashboard from "./pages/ArtistDashboard";
+import CollectorDashboard from "./pages/CollectorDashboard";
+import Journal from "./pages/Journal";
+import ApplyArtist from "./pages/ApplyArtist";
 import ForArtists from "./pages/ForArtists";
 import ForCollectors from "./pages/ForCollectors";
 import Contact from "./pages/Contact";
@@ -48,6 +53,11 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/artworks" element={<AdminArtworks />} />
+                <Route path="/admin/analytics" element={<AdminAnalytics />} />
+                <Route path="/artist-dashboard" element={<ArtistDashboard />} />
+                <Route path="/collector-dashboard" element={<CollectorDashboard />} />
+                <Route path="/journal" element={<Journal />} />
+                <Route path="/apply-artist" element={<ApplyArtist />} />
                 <Route path="/for-artists" element={<ForArtists />} />
                 <Route path="/for-collectors" element={<ForCollectors />} />
                 <Route path="/contact" element={<Contact />} />
