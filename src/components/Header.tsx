@@ -24,10 +24,8 @@ const Header = () => {
     { label: "Explore", href: "/explore" },
     { label: "Artists", href: "/artists" },
     { label: "Collections", href: "/collections" },
+    { label: "Journal", href: "/journal" },
     { label: "Secondary Market", href: "/secondary-market" },
-    { label: "For Artists", href: "/for-artists" },
-    { label: "For Collectors", href: "/for-collectors" },
-    { label: "Contact", href: "/contact" },
     { label: "About", href: "/about" },
   ];
 
@@ -80,9 +78,14 @@ const Header = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                      <Link to="/profile">
-                        My Profile
+                    <DropdownMenuItem asChild>
+                      <Link to="/collector-dashboard">
+                        My Collection
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/artist-dashboard">
+                        Artist Dashboard
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>

@@ -14,6 +14,156 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_feed: {
+        Row: {
+          activity_type: string
+          artist_id: string | null
+          artwork_id: string | null
+          collection_id: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_type: string
+          artist_id?: string | null
+          artwork_id?: string | null
+          collection_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_type?: string
+          artist_id?: string | null
+          artwork_id?: string | null
+          collection_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_feed_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_feed_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_feed_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      artist_applications: {
+        Row: {
+          admin_notes: string | null
+          artist_name: string
+          bio: string | null
+          created_at: string
+          email: string
+          id: string
+          instagram_url: string | null
+          portfolio_url: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          sample_work_urls: string[] | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          artist_name: string
+          bio?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          instagram_url?: string | null
+          portfolio_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sample_work_urls?: string[] | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          artist_name?: string
+          bio?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          instagram_url?: string | null
+          portfolio_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sample_work_urls?: string[] | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artist_applications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      artist_follows: {
+        Row: {
+          artist_id: string
+          created_at: string
+          follower_id: string
+          id: string
+        }
+        Insert: {
+          artist_id: string
+          created_at?: string
+          follower_id: string
+          id?: string
+        }
+        Update: {
+          artist_id?: string
+          created_at?: string
+          follower_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artist_follows_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "artist_follows_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       artists: {
         Row: {
           artwork_count: number | null
@@ -22,15 +172,18 @@ export type Database = {
           bio: string | null
           cover_image_url: string | null
           created_at: string
+          follower_count: number | null
           id: string
           instagram_url: string | null
           is_featured: boolean | null
+          is_verified: boolean | null
           name: string
           slug: string
           specialty: string | null
           twitter_url: string | null
           updated_at: string
           user_id: string | null
+          verification_date: string | null
           website_url: string | null
         }
         Insert: {
@@ -40,15 +193,18 @@ export type Database = {
           bio?: string | null
           cover_image_url?: string | null
           created_at?: string
+          follower_count?: number | null
           id?: string
           instagram_url?: string | null
           is_featured?: boolean | null
+          is_verified?: boolean | null
           name: string
           slug: string
           specialty?: string | null
           twitter_url?: string | null
           updated_at?: string
           user_id?: string | null
+          verification_date?: string | null
           website_url?: string | null
         }
         Update: {
@@ -58,15 +214,18 @@ export type Database = {
           bio?: string | null
           cover_image_url?: string | null
           created_at?: string
+          follower_count?: number | null
           id?: string
           instagram_url?: string | null
           is_featured?: boolean | null
+          is_verified?: boolean | null
           name?: string
           slug?: string
           specialty?: string | null
           twitter_url?: string | null
           updated_at?: string
           user_id?: string | null
+          verification_date?: string | null
           website_url?: string | null
         }
         Relationships: [
@@ -257,6 +416,76 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      journal_posts: {
+        Row: {
+          artist_id: string | null
+          author_id: string | null
+          collection_id: string | null
+          content: string | null
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          is_published: boolean | null
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          artist_id?: string | null
+          author_id?: string | null
+          collection_id?: string | null
+          content?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean | null
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          artist_id?: string | null
+          author_id?: string | null
+          collection_id?: string | null
+          content?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean | null
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_posts_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_posts_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       listings: {
         Row: {
@@ -486,6 +715,56 @@ export type Database = {
           wallet_address?: string | null
         }
         Relationships: []
+      }
+      purchase_inquiries: {
+        Row: {
+          admin_notes: string | null
+          artwork_id: string
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          artwork_id: string
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          artwork_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_inquiries_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sales_history: {
         Row: {
