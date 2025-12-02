@@ -24,6 +24,7 @@ const Header = () => {
     { label: "Explore", href: "/explore" },
     { label: "Artists", href: "/artists" },
     { label: "Collections", href: "/collections" },
+    { label: "Mint NFT", href: "/mint" },
     { label: "Journal", href: "/journal" },
     { label: "Secondary Market", href: "/secondary-market" },
     { label: "About", href: "/about" },

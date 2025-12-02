@@ -29,6 +29,7 @@ import Profile from "./pages/Profile";
 import Wishlist from "./pages/Wishlist";
 import SecondaryMarket from "./pages/SecondaryMarket";
 import MyListings from "./pages/MyListings";
+import Mint from "./pages/Mint";
 import ArtworkDetail from "./pages/ArtworkDetail";
 import ArtistDetail from "./pages/ArtistDetail";
 import CollectionDetail from "./pages/CollectionDetail";
@@ -69,6 +70,7 @@ const App = () => (
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/secondary-market" element={<SecondaryMarket />} />
                 <Route path="/my-listings" element={<MyListings />} />
+                <Route path="/mint" element={<Mint />} />
                 <Route path="/artwork/:id" element={<ArtworkDetail />} />
                 <Route path="/artist/:slug" element={<ArtistDetail />} />
                 <Route path="/collection/:slug" element={<CollectionDetail />} />
