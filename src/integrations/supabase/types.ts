@@ -123,6 +123,13 @@ export type Database = {
             foreignKeyName: "artist_applications_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
+            referencedRelation: "artist_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "artist_applications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -153,6 +160,13 @@ export type Database = {
             columns: ["artist_id"]
             isOneToOne: false
             referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "artist_follows_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "artist_public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -229,6 +243,13 @@ export type Database = {
           website_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "artists_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "artist_public_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "artists_user_id_fkey"
             columns: ["user_id"]
@@ -475,6 +496,13 @@ export type Database = {
             foreignKeyName: "journal_posts_author_id_fkey"
             columns: ["author_id"]
             isOneToOne: false
+            referencedRelation: "artist_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -678,6 +706,13 @@ export type Database = {
             foreignKeyName: "orders_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "artist_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -868,7 +903,19 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      artist_public_profiles: {
+        Row: {
+          artist_name: string | null
+          artist_slug: string | null
+          avatar_url: string | null
+          bio: string | null
+          full_name: string | null
+          id: string | null
+          is_verified: boolean | null
+          specialty: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       decrement_edition_available: {

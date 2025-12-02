@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import MakeOfferDialog from "@/components/MakeOfferDialog";
 import OffersList from "@/components/OffersList";
+import PurchaseInquiryDialog from "@/components/PurchaseInquiryDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -350,9 +351,15 @@ const ArtworkDetail = () => {
                     </Button>
                   </div>
                 ) : (
-                  <Button size="lg" disabled className="w-full mb-6">
-                    Sold Out
-                  </Button>
+                  <div className="space-y-4 mb-6">
+                    <Button size="lg" disabled className="w-full">
+                      Sold Out
+                    </Button>
+                    <PurchaseInquiryDialog 
+                      artworkId={artwork.id} 
+                      artworkTitle={artwork.title} 
+                    />
+                  </div>
                 )}
 
                 {/* Offers Section */}

@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -83,8 +84,19 @@ const Artists = () => {
                 ))}
               </div>
             ) : artists.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">No artists found</p>
+              <div className="text-center py-16 max-w-md mx-auto">
+                <div className="mb-6 opacity-50">
+                  <svg className="w-24 h-24 mx-auto text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-serif font-medium mb-3">No Artists Yet</h3>
+                <p className="text-muted-foreground mb-6">
+                  Monarch Gallery is curating a select group of visionary artists. Join our growing community of creators.
+                </p>
+                <Link to="/apply-artist">
+                  <Button size="lg">Apply to Join Monarch</Button>
+                </Link>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { Instagram, Twitter, Globe, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import FollowButton from "@/components/FollowButton";
 
 interface Artist {
   id: string;
@@ -170,6 +171,11 @@ const ArtistDetail = () => {
                     <span className="font-medium">
                       {artworks.length} {artworks.length === 1 ? 'artwork' : 'artworks'}
                     </span>
+                  </div>
+
+                  {/* Follow Button */}
+                  <div className="pt-4">
+                    <FollowButton artistId={artist.id} variant="default" size="lg" />
                   </div>
 
                   {/* Social Links */}
