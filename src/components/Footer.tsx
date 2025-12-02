@@ -54,13 +54,13 @@ const Footer = () => {
             <h4 className="text-sm font-medium mb-4 uppercase tracking-wider">Work With Us</h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/for-artists" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  For Artists
+                <Link to="/apply-artist" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Apply as Artist
                 </Link>
               </li>
               <li>
-                <Link to="/for-collectors" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  For Collectors
+                <Link to="/collector-dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Collector Dashboard
                 </Link>
               </li>
               <li>

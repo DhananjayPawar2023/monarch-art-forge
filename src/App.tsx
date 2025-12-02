@@ -19,6 +19,7 @@ import ArtistDashboard from "./pages/ArtistDashboard";
 import CollectorDashboard from "./pages/CollectorDashboard";
 import Journal from "./pages/Journal";
 import ApplyArtist from "./pages/ApplyArtist";
+import AdminArtworkEdit from "./pages/AdminArtworkEdit";
 import ForArtists from "./pages/ForArtists";
 import ForCollectors from "./pages/ForCollectors";
 import Contact from "./pages/Contact";
@@ -53,6 +54,7 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/artworks" element={<AdminArtworks />} />
+                <Route path="/admin/artwork/edit/:id" element={<AdminArtworkEdit />} />
                 <Route path="/admin/analytics" element={<AdminAnalytics />} />
                 <Route path="/artist-dashboard" element={<ArtistDashboard />} />
                 <Route path="/collector-dashboard" element={<CollectorDashboard />} />
