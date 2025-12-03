@@ -151,6 +151,25 @@ export const getBlockExplorerUrl = (
     polygon: 'https://polygonscan.com/tx/',
     goerli: 'https://goerli.etherscan.io/tx/',
     mumbai: 'https://mumbai.polygonscan.com/tx/',
+    base: 'https://basescan.org/tx/',
+    'base-sepolia': 'https://sepolia.basescan.org/tx/',
   };
-  return `${explorers[chain.toLowerCase()] || explorers.ethereum}${txHash}`;
+  const key = chain.toLowerCase();
+  const baseUrl = explorers[key] || explorers.ethereum;
+  return `${baseUrl}${txHash}`;
+};
+
+export const getOpenSeaAssetUrl = (
+  chain: string,
+  contractAddress: string,
+  tokenId: string
+): string => {
+  const networks: Record<string, string> = {
+    ethereum: 'https://opensea.io/assets/ethereum/',
+    polygon: 'https://opensea.io/assets/matic/',
+    base: 'https://opensea.io/assets/base/',
+  };
+  const key = chain.toLowerCase();
+  const baseUrl = networks[key] || networks.ethereum;
+  return `${baseUrl}${contractAddress}/${tokenId}`;
 };
