@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import WalletConnect from "@/components/WalletConnect";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
@@ -90,8 +91,9 @@ const NFTGallery = () => {
               </div>
               <div className="flex flex-col items-start md:items-end gap-3">
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                  Mint on Monarch
+                  Wallet & Mint
                 </p>
+                <WalletConnect />
                 <Link to="/mint">
                   <Button size="lg" variant="outline">
                     Mint Artwork
