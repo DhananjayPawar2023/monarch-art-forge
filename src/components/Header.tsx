@@ -34,35 +34,36 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link to="/" className="text-xl font-serif font-medium tracking-tight hover:opacity-70 transition-opacity">
+        <div className="flex items-center justify-between h-14 sm:h-16">
+          <Link to="/" className="text-lg sm:text-xl font-serif font-medium tracking-tight hover:opacity-70 transition-opacity flex-shrink-0">
             monarch
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8">
+          {/* Desktop nav - hidden on smaller screens */}
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="hidden sm:flex">
-              <Search className="h-5 w-5" />
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Button variant="ghost" size="icon" className="hidden sm:flex h-9 w-9">
+              <Search className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
             
             <Link to="/cart" className="relative">
-              <Button variant="ghost" size="icon">
-                <ShoppingCart className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
                 {totalItems > 0 && (
                   <Badge 
                     variant="destructive" 
-                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                    className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center p-0 text-[10px] sm:text-xs"
                   >
                     {totalItems}
                   </Badge>
@@ -72,9 +73,11 @@ const Header = () => {
             
             {user ? (
               <>
-                <WalletConnect />
+                <div className="hidden md:block">
+                  <WalletConnect />
+                </div>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild className="hidden md:flex">
+                  <DropdownMenuTrigger asChild className="hidden lg:flex">
                     <Button variant="ghost" size="sm">
                       Account
                     </Button>
@@ -120,53 +123,60 @@ const Header = () => {
                 </DropdownMenu>
               </>
             ) : (
-              <Link to="/auth" className="hidden md:block">
+              <Link to="/auth" className="hidden lg:block">
                 <Button variant="ghost" size="sm">
                   Sign In
                 </Button>
               </Link>
             )}
 
+            {/* Mobile/Tablet menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild className="md:hidden">
-                <Button variant="ghost" size="icon">
+              <SheetTrigger asChild className="lg:hidden">
+                <Button variant="ghost" size="icon" className="h-9 w-9">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:w-80">
-                <nav className="flex flex-col gap-6 mt-8">
+              <SheetContent side="right" className="w-full max-w-xs sm:max-w-sm overflow-y-auto">
+                <nav className="flex flex-col gap-4 mt-6">
                   {navLinks.map((link) => (
                     <Link
                       key={link.href}
                       to={link.href}
-                      className="text-lg hover:text-muted-foreground transition-colors"
+                      className="text-base sm:text-lg hover:text-muted-foreground transition-colors py-1"
                       onClick={() => setIsOpen(false)}
                     >
                       {link.label}
                     </Link>
                   ))}
-                  <div className="pt-6 border-t border-border">
+                  <div className="pt-4 border-t border-border space-y-3">
                     {user ? (
-                      <div className="space-y-4">
+                      <>
+                        <WalletConnect />
                         <Link to="/profile" onClick={() => setIsOpen(false)}>
-                          <Button variant="outline" className="w-full">
+                          <Button variant="outline" className="w-full" size="sm">
                             My Profile
+                          </Button>
+                        </Link>
+                        <Link to="/collector-dashboard" onClick={() => setIsOpen(false)}>
+                          <Button variant="outline" className="w-full" size="sm">
+                            My Collection
                           </Button>
                         </Link>
                         {isAdmin && (
                           <Link to="/admin" onClick={() => setIsOpen(false)}>
-                            <Button variant="outline" className="w-full">
+                            <Button variant="outline" className="w-full" size="sm">
                               Admin Dashboard
                             </Button>
                           </Link>
                         )}
-                        <Button variant="default" className="w-full" onClick={signOut}>
+                        <Button variant="default" className="w-full" size="sm" onClick={signOut}>
                           Sign Out
                         </Button>
-                      </div>
+                      </>
                     ) : (
                       <Link to="/auth" onClick={() => setIsOpen(false)}>
-                        <Button variant="default" className="w-full">
+                        <Button variant="default" className="w-full" size="sm">
                           Sign In
                         </Button>
                       </Link>

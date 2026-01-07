@@ -164,97 +164,102 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-serif">Welcome to Monarch Gallery</CardTitle>
-          <CardDescription>Sign in to your account or create a new one</CardDescription>
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8 sm:py-12">
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader className="space-y-1 px-4 sm:px-6">
+          <CardTitle className="text-xl sm:text-2xl font-serif text-center sm:text-left">Welcome to Monarch Gallery</CardTitle>
+          <CardDescription className="text-sm text-center sm:text-left">Sign in to your account or create a new one</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           <div className="mb-6">
             <Button 
               onClick={handleWalletSignIn} 
               disabled={walletLoading}
               variant="outline"
-              className="w-full gap-2"
+              className="w-full gap-2 h-10 sm:h-11 text-sm"
             >
-              <Wallet className="w-5 h-5" />
+              <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
               {walletLoading ? 'Connecting...' : 'Connect with Wallet'}
             </Button>
-            <div className="relative my-6">
+            <div className="relative my-5 sm:my-6">
               <Separator />
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-xs text-muted-foreground">
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground whitespace-nowrap">
                 Or continue with email
               </span>
             </div>
           </div>
 
-          <Tabs defaultValue="signin">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          <Tabs defaultValue="signin" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 h-9 sm:h-10">
+              <TabsTrigger value="signin" className="text-sm">Sign In</TabsTrigger>
+              <TabsTrigger value="signup" className="text-sm">Sign Up</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
+            <TabsContent value="signin" className="mt-4">
+              <form onSubmit={handleSignIn} className="space-y-3 sm:space-y-4">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="signin-email" className="text-sm">Email</Label>
                   <Input
                     id="signin-email"
                     name="email"
                     type="email"
                     placeholder="you@example.com"
                     required
+                    className="h-10 text-sm"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="signin-password" className="text-sm">Password</Label>
                   <Input
                     id="signin-password"
                     name="password"
                     type="password"
                     required
+                    className="h-10 text-sm"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={formLoading}>
+                <Button type="submit" className="w-full h-10 sm:h-11 text-sm" disabled={formLoading}>
                   {formLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
               </form>
             </TabsContent>
 
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name">Full Name</Label>
+            <TabsContent value="signup" className="mt-4">
+              <form onSubmit={handleSignUp} className="space-y-3 sm:space-y-4">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="signup-name" className="text-sm">Full Name</Label>
                   <Input
                     id="signup-name"
                     name="fullName"
                     type="text"
                     placeholder="John Doe"
                     required
+                    className="h-10 text-sm"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="signup-email" className="text-sm">Email</Label>
                   <Input
                     id="signup-email"
                     name="email"
                     type="email"
                     placeholder="you@example.com"
                     required
+                    className="h-10 text-sm"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="signup-password" className="text-sm">Password</Label>
                   <Input
                     id="signup-password"
                     name="password"
                     type="password"
                     placeholder="At least 6 characters"
                     required
+                    className="h-10 text-sm"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={formLoading}>
+                <Button type="submit" className="w-full h-10 sm:h-11 text-sm" disabled={formLoading}>
                   {formLoading ? 'Creating account...' : 'Create Account'}
                 </Button>
               </form>
