@@ -11,6 +11,23 @@ const WalletConnect = () => {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
   const handleConnect = async () => {
+    const isEmbedded = (() => {
+      try {
+        return window.self !== window.top;
+      } catch {
+        return true;
+      }
+    })();
+
+    if (isEmbedded) {
+      toast({
+        title: 'Wallet not available here',
+        description: 'Wallet extensions usually do not work inside embedded previews. Open the app in a new tab to use MetaMask.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (!window.ethereum) {
       toast({
         title: "MetaMask not found",
