@@ -154,14 +154,14 @@ const ArtworkDetail = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 pt-32 pb-24 px-4">
+        <main className="flex-1 pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-24 px-4">
           <div className="container mx-auto max-w-7xl">
-            <div className="grid lg:grid-cols-2 gap-12">
+            <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
               <Skeleton className="aspect-square w-full" />
-              <div className="space-y-6">
-                <Skeleton className="h-12 w-3/4" />
-                <Skeleton className="h-6 w-1/2" />
-                <Skeleton className="h-32 w-full" />
+              <div className="space-y-4 sm:space-y-6">
+                <Skeleton className="h-8 sm:h-12 w-3/4" />
+                <Skeleton className="h-5 sm:h-6 w-1/2" />
+                <Skeleton className="h-24 sm:h-32 w-full" />
               </div>
             </div>
           </div>
@@ -175,11 +175,11 @@ const ArtworkDetail = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 pt-32 pb-24 px-4">
+        <main className="flex-1 pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-24 px-4">
           <div className="container mx-auto max-w-4xl text-center">
-            <h1 className="text-4xl font-serif font-medium mb-4">Artwork Not Found</h1>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-medium mb-4">Artwork Not Found</h1>
             <Link to="/explore">
-              <Button>Back to Explore</Button>
+              <Button size="sm" className="h-9 sm:h-10">Back to Explore</Button>
             </Link>
           </div>
         </main>
@@ -212,11 +212,12 @@ const ArtworkDetail = () => {
       />
       <Header />
       
-      <main className="flex-1 pt-32 pb-24 px-4">
+      <main className="flex-1 pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-24 px-4">
         <div className="container mx-auto max-w-7xl">
-          <div className="grid lg:grid-cols-2 gap-12">
-            <div className="space-y-6">
-              <div className="aspect-square overflow-hidden bg-muted">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
+            {/* Image */}
+            <div className="space-y-4 sm:space-y-6">
+              <div className="aspect-square overflow-hidden bg-muted rounded-sm">
                 <img
                   src={artwork.primary_image_url || 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=800&q=80'}
                   alt={artwork.title}
@@ -225,88 +226,93 @@ const ArtworkDetail = () => {
               </div>
             </div>
             
-            <div className="space-y-8">
+            {/* Details */}
+            <div className="space-y-4 sm:space-y-6 lg:space-y-8">
               <div>
-                <h1 className="text-5xl font-serif font-medium mb-4">{artwork.title}</h1>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-medium mb-2 sm:mb-4">{artwork.title}</h1>
                 <Link 
                   to={`/artist/${artwork.artists?.slug}`}
-                  className="text-xl text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-base sm:text-lg md:text-xl text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {artwork.artists?.name || 'Unknown Artist'}
                 </Link>
               </div>
               
               {artwork.description && (
-                <p className="text-lg leading-relaxed">{artwork.description}</p>
+                <p className="text-sm sm:text-base md:text-lg leading-relaxed">{artwork.description}</p>
               )}
               
-              <div className="space-y-4 pt-6 border-t border-border">
+              {/* Artwork details grid */}
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-4 sm:pt-6 border-t border-border">
                 {artwork.medium && (
                   <div>
-                    <span className="text-sm text-muted-foreground">Medium</span>
-                    <p className="text-lg">{artwork.medium}</p>
+                    <span className="text-xs sm:text-sm text-muted-foreground">Medium</span>
+                    <p className="text-sm sm:text-base md:text-lg">{artwork.medium}</p>
                   </div>
                 )}
                 
                 {artwork.dimensions && (
                   <div>
-                    <span className="text-sm text-muted-foreground">Dimensions</span>
-                    <p className="text-lg">{artwork.dimensions}</p>
+                    <span className="text-xs sm:text-sm text-muted-foreground">Dimensions</span>
+                    <p className="text-sm sm:text-base md:text-lg">{artwork.dimensions}</p>
                   </div>
                 )}
                 
                 <div>
-                  <span className="text-sm text-muted-foreground">Edition</span>
-                  <p className="text-lg">
+                  <span className="text-xs sm:text-sm text-muted-foreground">Edition</span>
+                  <p className="text-sm sm:text-base md:text-lg">
                     {artwork.edition_total === 1 
                       ? 'Unique work' 
-                      : `${artwork.edition_available} of ${artwork.edition_total} available`}
+                      : `${artwork.edition_available}/${artwork.edition_total}`}
                   </p>
                 </div>
                 
                 {artwork.year && (
                   <div>
-                    <span className="text-sm text-muted-foreground">Year</span>
-                    <p className="text-lg">{artwork.year}</p>
-                  </div>
-                )}
-
-                {artwork.is_nft && (
-                  <div>
-                    <span className="text-sm text-muted-foreground">NFT Details</span>
-                    <div className="space-y-1 mt-1">
-                      {artwork.chain && <p className="text-sm">Chain: {artwork.chain}</p>}
-                      {artwork.contract_address && (
-                        <p className="text-sm font-mono">
-                          Contract: {artwork.contract_address.slice(0, 8)}...{artwork.contract_address.slice(-6)}
-                        </p>
-                      )}
-                      {artwork.token_id && <p className="text-sm">Token ID: {artwork.token_id}</p>}
-                    </div>
+                    <span className="text-xs sm:text-sm text-muted-foreground">Year</span>
+                    <p className="text-sm sm:text-base md:text-lg">{artwork.year}</p>
                   </div>
                 )}
               </div>
+
+              {artwork.is_nft && (
+                <div className="pt-2 sm:pt-4">
+                  <span className="text-xs sm:text-sm text-muted-foreground">NFT Details</span>
+                  <div className="grid grid-cols-2 gap-2 mt-1 text-xs sm:text-sm">
+                    {artwork.chain && <p>Chain: {artwork.chain}</p>}
+                    {artwork.contract_address && (
+                      <p className="font-mono truncate">
+                        Contract: {artwork.contract_address.slice(0, 6)}...{artwork.contract_address.slice(-4)}
+                      </p>
+                    )}
+                    {artwork.token_id && <p>Token ID: {artwork.token_id}</p>}
+                  </div>
+                </div>
+              )}
               
-              <div className="pt-6 border-t border-border">
-                <p className="text-4xl font-serif font-medium mb-6">
-                  {artwork.price_usd ? `$${artwork.price_usd.toLocaleString()}` : 'Price on request'}
+              {/* Pricing section */}
+              <div className="pt-4 sm:pt-6 border-t border-border">
+                <div className="mb-4 sm:mb-6">
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-serif font-medium">
+                    {artwork.price_usd ? `$${artwork.price_usd.toLocaleString()}` : 'Price on request'}
+                  </p>
                   {artwork.price_eth && (
-                    <span className="text-xl text-muted-foreground ml-4">
+                    <span className="text-base sm:text-lg md:text-xl text-muted-foreground">
                       {artwork.price_eth} ETH
                     </span>
                   )}
                   {artwork.royalty_percentage && (
-                    <span className="block text-sm text-muted-foreground mt-2">
+                    <span className="block text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
                       Artist royalty: {artwork.royalty_percentage}% on secondary sales
                     </span>
                   )}
-                </p>
+                </div>
                 
                 {artwork.edition_available && artwork.edition_available > 0 ? (
-                  <div className="flex gap-4 mb-6">
+                  <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
                     <Button 
-                      size="lg" 
-                      className="flex-1"
+                      size="sm"
+                      className="flex-1 min-w-[120px] h-9 sm:h-10 text-sm"
                       onClick={() => {
                         if (!user) {
                           toast({
@@ -335,24 +341,25 @@ const ArtworkDetail = () => {
                       sellerId={artwork.artists?.user_id || artwork.current_owner_id || ''}
                       currentPriceUsd={artwork.price_usd || undefined}
                       trigger={
-                        <Button size="lg" variant="outline" className="gap-2">
-                          <DollarSign className="w-4 h-4" />
-                          Make Offer
+                        <Button size="sm" variant="outline" className="gap-1.5 h-9 sm:h-10 text-sm">
+                          <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <span className="hidden xs:inline">Make</span> Offer
                         </Button>
                       }
                     />
                     <Button 
-                      size="lg" 
+                      size="sm"
                       variant="outline"
                       onClick={toggleWishlist}
                       disabled={wishlistLoading}
+                      className="h-9 sm:h-10 w-9 sm:w-10 p-0"
                     >
-                      <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />
+                      <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${inWishlist ? 'fill-current' : ''}`} />
                     </Button>
                   </div>
                 ) : (
-                  <div className="space-y-4 mb-6">
-                    <Button size="lg" disabled className="w-full">
+                  <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+                    <Button size="sm" disabled className="w-full h-9 sm:h-10 text-sm">
                       Sold Out
                     </Button>
                     <PurchaseInquiryDialog 
@@ -364,19 +371,19 @@ const ArtworkDetail = () => {
 
                 {/* Offers Section */}
                 <Tabs defaultValue="details" className="w-full">
-                  <TabsList className="w-full">
-                    <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
-                    <TabsTrigger value="offers" className="flex-1">Offers</TabsTrigger>
+                  <TabsList className="w-full h-9 sm:h-10">
+                    <TabsTrigger value="details" className="flex-1 text-sm">Details</TabsTrigger>
+                    <TabsTrigger value="offers" className="flex-1 text-sm">Offers</TabsTrigger>
                   </TabsList>
-                  <TabsContent value="details" className="space-y-4 pt-4">
-                    <div className="text-muted-foreground">
+                  <TabsContent value="details" className="space-y-3 sm:space-y-4 pt-3 sm:pt-4">
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       <p>Full artwork details and provenance information.</p>
                       {artwork.is_nft && (
                         <p className="mt-2">This artwork is minted as an NFT on {artwork.chain}.</p>
                       )}
                     </div>
                   </TabsContent>
-                  <TabsContent value="offers" className="pt-4">
+                  <TabsContent value="offers" className="pt-3 sm:pt-4">
                     <OffersList
                       artworkId={artwork.id}
                       sellerId={artwork.artists?.user_id || artwork.current_owner_id || ''}

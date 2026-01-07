@@ -68,9 +68,11 @@ const WalletConnect = () => {
 
   if (walletAddress) {
     return (
-      <Button variant="outline" className="gap-2">
-        <Wallet className="w-4 h-4" />
-        {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+      <Button variant="outline" className="gap-1.5 sm:gap-2 h-9 sm:h-10 text-xs sm:text-sm px-2.5 sm:px-4">
+        <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+        <span className="truncate max-w-[80px] sm:max-w-none">
+          {walletAddress.slice(0, 4)}...{walletAddress.slice(-3)}
+        </span>
       </Button>
     );
   }
@@ -80,9 +82,9 @@ const WalletConnect = () => {
       onClick={handleConnect}
       disabled={connecting}
       variant="outline"
-      className="gap-2"
+      className="gap-1.5 sm:gap-2 h-9 sm:h-10 text-xs sm:text-sm px-2.5 sm:px-4 whitespace-nowrap"
     >
-      <Wallet className="w-4 h-4" />
+      <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
       {connecting ? 'Connecting...' : 'Connect Wallet'}
     </Button>
   );
