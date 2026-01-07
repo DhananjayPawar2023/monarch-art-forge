@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -24,14 +24,18 @@ const signInSchema = z.object({
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { signUp, signIn, signInWithWallet } = useAuth();
+  const { user, loading: authLoading, signUp, signIn, signInWithWallet } = useAuth();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && user) navigate('/');
+  }, [authLoading, user, navigate]);
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    setFormLoading(true);
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -43,12 +47,12 @@ const Auth = () => {
     try {
       const validated = signUpSchema.parse(data);
       const { error } = await signUp(validated.email, validated.password, validated.fullName);
-      
+
       if (error) {
         toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
+          title: 'Error',
+          description: error.message || 'Sign up failed. Please try again.',
+          variant: 'destructive',
         });
       } else {
         navigate('/');
@@ -56,19 +60,19 @@ const Auth = () => {
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         toast({
-          title: "Validation Error",
+          title: 'Validation Error',
           description: error.errors[0].message,
-          variant: "destructive",
+          variant: 'destructive',
         });
       }
     } finally {
-      setLoading(false);
+      setFormLoading(false);
     }
   };
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    setFormLoading(true);
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -79,12 +83,12 @@ const Auth = () => {
     try {
       const validated = signInSchema.parse(data);
       const { error } = await signIn(validated.email, validated.password);
-      
+
       if (error) {
         toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
+          title: 'Error',
+          description: error.message || 'Sign in failed. Please check your credentials.',
+          variant: 'destructive',
         });
       } else {
         navigate('/');
@@ -92,22 +96,39 @@ const Auth = () => {
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         toast({
-          title: "Validation Error",
+          title: 'Validation Error',
           description: error.errors[0].message,
-          variant: "destructive",
+          variant: 'destructive',
         });
       }
     } finally {
-      setLoading(false);
+      setFormLoading(false);
     }
   };
 
   const handleWalletSignIn = async () => {
+    const isEmbedded = (() => {
+      try {
+        return window.self !== window.top;
+      } catch {
+        return true;
+      }
+    })();
+
+    if (isEmbedded) {
+      toast({
+        title: 'Wallet not available here',
+        description: 'Wallet extensions usually do not work inside embedded previews. Open the app in a new tab to use MetaMask.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (!window.ethereum) {
       toast({
-        title: "MetaMask not found",
-        description: "Please install MetaMask to connect with your wallet",
-        variant: "destructive",
+        title: 'MetaMask not found',
+        description: 'Please install MetaMask (or enable it for this site) to connect with your wallet.',
+        variant: 'destructive',
       });
       return;
     }
@@ -116,26 +137,26 @@ const Auth = () => {
 
     try {
       const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts'
+        method: 'eth_requestAccounts',
       });
 
       const address = accounts[0];
       const { error } = await signInWithWallet(address);
 
+      // NOTE: current implementation sends an email OTP/magic link.
+      // We'll replace this with real Sign-In With Ethereum (signature-based) next.
       if (error) {
         toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
+          title: 'Error',
+          description: error.message || 'Wallet sign-in failed. Please try again.',
+          variant: 'destructive',
         });
-      } else {
-        navigate('/');
       }
     } catch (error: any) {
       toast({
-        title: "Connection failed",
-        description: error.message,
-        variant: "destructive",
+        title: 'Connection failed',
+        description: error?.message || 'Failed to connect wallet.',
+        variant: 'destructive',
       });
     } finally {
       setWalletLoading(false);
@@ -195,8 +216,8 @@ const Auth = () => {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Signing in...' : 'Sign In'}
+                <Button type="submit" className="w-full" disabled={formLoading}>
+                  {formLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
               </form>
             </TabsContent>
@@ -233,8 +254,8 @@ const Auth = () => {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Creating account...' : 'Create Account'}
+                <Button type="submit" className="w-full" disabled={formLoading}>
+                  {formLoading ? 'Creating account...' : 'Create Account'}
                 </Button>
               </form>
             </TabsContent>
