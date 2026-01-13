@@ -5,11 +5,8 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import ArtworkCard from "@/components/ArtworkCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Instagram, Twitter, Globe, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import FollowButton from "@/components/FollowButton";
 
 interface Artist {
   id: string;
@@ -32,6 +29,8 @@ interface Artwork {
   primary_image_url: string | null;
   price_usd: number | null;
   edition_total: number | null;
+  year: number | null;
+  medium: string | null;
 }
 
 const ArtistDetail = () => {
@@ -44,7 +43,6 @@ const ArtistDetail = () => {
   useEffect(() => {
     const fetchArtistData = async () => {
       try {
-        // Fetch artist
         const { data: artistData, error: artistError } = await supabase
           .from("artists")
           .select("*")
@@ -54,10 +52,9 @@ const ArtistDetail = () => {
         if (artistError) throw artistError;
         setArtist(artistData);
 
-        // Fetch artworks by this artist
         const { data: artworksData, error: artworksError } = await supabase
           .from("artworks")
-          .select("id, title, slug, primary_image_url, price_usd, edition_total")
+          .select("id, title, slug, primary_image_url, price_usd, edition_total, year, medium")
           .eq("artist_id", artistData.id)
           .eq("status", "published")
           .order("created_at", { ascending: false });
@@ -85,14 +82,16 @@ const ArtistDetail = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 pt-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-              <Skeleton className="aspect-[3/4] w-full" />
-              <div className="space-y-6">
-                <Skeleton className="h-12 w-3/4" />
-                <Skeleton className="h-6 w-1/2" />
-                <Skeleton className="h-32 w-full" />
+        <main className="flex-1 pt-20 lg:pt-24">
+          <div className="max-w-[1800px] mx-auto px-6 sm:px-8 lg:px-12 py-16">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-16">
+              <div className="lg:col-span-2">
+                <Skeleton className="aspect-[3/4] w-full" />
+              </div>
+              <div className="lg:col-span-3 space-y-6">
+                <Skeleton className="h-16 w-3/4" />
+                <Skeleton className="h-6 w-1/3" />
+                <Skeleton className="h-40 w-full" />
               </div>
             </div>
           </div>
@@ -106,14 +105,14 @@ const ArtistDetail = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 pt-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-            <h1 className="text-4xl font-serif font-medium mb-4">Artist Not Found</h1>
+        <main className="flex-1 pt-20 lg:pt-24">
+          <div className="max-w-3xl mx-auto px-6 py-24 text-center">
+            <h1 className="text-4xl font-serif mb-4">Artist Not Found</h1>
             <p className="text-muted-foreground mb-8">
               The artist you're looking for doesn't exist.
             </p>
-            <Link to="/artists">
-              <Button>Back to Artists</Button>
+            <Link to="/artists" className="font-serif underline underline-offset-4 hover:opacity-70 transition-opacity">
+              Back to Artists
             </Link>
           </div>
         </main>
@@ -125,138 +124,147 @@ const ArtistDetail = () => {
   return (
     <>
       <SEO 
-        title={`${artist.name} - Artist`}
-        description={artist.bio || `${artist.name}, ${artist.specialty || 'Artist'}. View artworks and profile at Monarch Gallery.`}
+        title={`${artist.name}`}
+        description={artist.bio || `${artist.name}. View works and profile at Monarch.`}
         image={artist.avatar_url || artist.cover_image_url || undefined}
       />
       <div className="min-h-screen flex flex-col">
         <Header />
         
-        <main className="flex-1 pt-16">
-          {/* Hero Section */}
-          <section className="py-16 border-b border-border">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                {/* Artist Image */}
-                <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-                  {(artist.avatar_url || artist.cover_image_url) && (
-                    <img
-                      src={artist.cover_image_url || artist.avatar_url || ""}
-                      alt={artist.name}
-                      className="w-full h-full object-cover"
-                    />
-                  )}
+        <main className="flex-1 pt-20 lg:pt-24">
+          {/* Artist Header - Museum Style, Asymmetrical */}
+          <section className="py-12 md:py-20 border-b border-border/50">
+            <div className="max-w-[1800px] mx-auto px-6 sm:px-8 lg:px-12">
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-start">
+                {/* Artist Portrait */}
+                <div className="lg:col-span-2">
+                  <div className="relative aspect-[3/4] overflow-hidden bg-muted image-frame">
+                    {(artist.avatar_url || artist.cover_image_url) && (
+                      <img
+                        src={artist.cover_image_url || artist.avatar_url || ""}
+                        alt={artist.name}
+                        className="w-full h-full object-cover hover-illuminate"
+                      />
+                    )}
+                  </div>
                 </div>
 
-                {/* Artist Info */}
-                <div className="space-y-6 lg:pt-8">
+                {/* Artist Information */}
+                <div className="lg:col-span-3 lg:pt-8 space-y-8">
+                  {/* Name */}
                   <div>
-                    <h1 className="text-5xl md:text-6xl font-serif font-medium mb-2">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-normal tracking-tight mb-3">
                       {artist.name}
                     </h1>
                     {artist.specialty && (
-                      <p className="text-xl font-serif italic text-muted-foreground">
+                      <p className="text-lg md:text-xl font-serif italic text-muted-foreground">
                         {artist.specialty}
                       </p>
                     )}
                   </div>
 
+                  {/* Artist Statement - Gallery Wall Description */}
                   {artist.bio && (
-                    <p className="text-foreground leading-relaxed max-w-xl">
-                      {artist.bio}
-                    </p>
+                    <div className="max-w-xl">
+                      <p className="text-lg font-serif leading-relaxed text-foreground/90">
+                        {artist.bio}
+                      </p>
+                    </div>
                   )}
 
-                  <div className="flex items-center gap-4 text-sm">
-                    <span className="font-medium">
-                      {artworks.length} {artworks.length === 1 ? 'artwork' : 'artworks'}
-                    </span>
-                  </div>
-
-                  {/* Follow Button */}
-                  <div className="pt-4">
-                    <FollowButton artistId={artist.id} variant="default" size="lg" />
-                  </div>
-
-                  {/* Social Links */}
-                  {(artist.website_url || artist.instagram_url || artist.twitter_url) && (
-                    <div className="flex gap-3 pt-4">
-                      {artist.website_url && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          asChild
-                        >
+                  {/* Minimal Links - No social icons, just text */}
+                  {(artist.website_url || artist.instagram_url) && (
+                    <div className="pt-4">
+                      <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
+                        {artist.website_url && (
                           <a
                             href={artist.website_url}
                             target="_blank"
                             rel="noopener noreferrer"
+                            className="font-serif hover:text-foreground transition-colors"
                           >
-                            <Globe className="w-4 h-4 mr-2" />
                             Website
                           </a>
-                        </Button>
-                      )}
-                      {artist.instagram_url && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          asChild
-                        >
+                        )}
+                        {artist.instagram_url && (
                           <a
                             href={artist.instagram_url}
                             target="_blank"
                             rel="noopener noreferrer"
+                            className="font-serif hover:text-foreground transition-colors"
                           >
-                            <Instagram className="w-4 h-4 mr-2" />
                             Instagram
                           </a>
-                        </Button>
-                      )}
-                      {artist.twitter_url && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          asChild
-                        >
+                        )}
+                        {artist.twitter_url && (
                           <a
                             href={artist.twitter_url}
                             target="_blank"
                             rel="noopener noreferrer"
+                            className="font-serif hover:text-foreground transition-colors"
                           >
-                            <Twitter className="w-4 h-4 mr-2" />
                             Twitter
                           </a>
-                        </Button>
-                      )}
+                        )}
+                      </div>
                     </div>
                   )}
+
+                  {/* Editor's Note - Optional curatorial context */}
+                  <div className="pt-8 border-t border-border/50">
+                    <p className="museum-label mb-3">Editor's Note</p>
+                    <p className="text-muted-foreground font-serif text-sm leading-relaxed max-w-md">
+                      {artist.name}'s work is part of the Monarch collection, 
+                      representing a commitment to artistic excellence and cultural significance.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* Artworks Section */}
-          <section className="py-16">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-serif font-medium mb-8">Artworks</h2>
+          {/* Selected Works */}
+          <section className="py-16 md:py-24">
+            <div className="max-w-[1800px] mx-auto px-6 sm:px-8 lg:px-12">
+              <h2 className="text-2xl md:text-3xl font-serif font-normal mb-12">
+                Selected Works
+              </h2>
               
               {artworks.length === 0 ? (
-                <p className="text-muted-foreground text-center py-12">
-                  No artworks available yet
+                <p className="text-muted-foreground font-serif text-center py-16">
+                  No works available at this time
                 </p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
                   {artworks.map((artwork) => (
-                    <ArtworkCard
-                      key={artwork.id}
-                      id={artwork.id}
-                      title={artwork.title}
-                      artistName={artist.name}
-                      image={artwork.primary_image_url || ""}
-                      price={artwork.price_usd ? `$${artwork.price_usd.toLocaleString()}` : undefined}
-                      edition={artwork.edition_total === 1 ? "1/1" : `Edition of ${artwork.edition_total}`}
-                    />
+                    <Link 
+                      key={artwork.id} 
+                      to={`/artwork/${artwork.id}`}
+                      className="group block"
+                    >
+                      {/* Image */}
+                      <div className="aspect-[4/5] overflow-hidden bg-muted mb-4 image-frame">
+                        {artwork.primary_image_url && (
+                          <img
+                            src={artwork.primary_image_url}
+                            alt={artwork.title}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02] hover-illuminate"
+                          />
+                        )}
+                      </div>
+                      
+                      {/* Artwork Info - Museum Label Style */}
+                      <div className="space-y-1">
+                        <h3 className="font-serif text-lg group-hover:opacity-70 transition-opacity">
+                          {artwork.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground font-serif">
+                          {artwork.year && <span>{artwork.year}</span>}
+                          {artwork.year && artwork.medium && <span> · </span>}
+                          {artwork.medium && <span>{artwork.medium}</span>}
+                        </p>
+                      </div>
+                    </Link>
                   ))}
                 </div>
               )}

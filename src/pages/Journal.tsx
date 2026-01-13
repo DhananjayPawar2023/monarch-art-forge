@@ -5,8 +5,6 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Calendar } from "lucide-react";
 
 interface JournalPost {
   id: string;
@@ -53,92 +51,113 @@ const Journal = () => {
     }
   };
 
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "";
+    return new Date(dateString).toLocaleDateString('en-US', { 
+      month: 'long', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
+  };
+
+  const estimateReadTime = (excerpt: string | null) => {
+    // Rough estimate based on excerpt
+    return "5 min read";
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEO 
-        title="Journal"
-        description="Stories, interviews, and insights from the world of contemporary art at Monarch Gallery."
+        title="Stories"
+        description="Artist philosophy, cultural commentary, and deep storytelling from the world of contemporary art."
       />
       <Header />
       
-      <main className="flex-1 pt-16">
-        <section className="py-16 border-b border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-medium mb-6">
-              Journal
+      <main className="flex-1 pt-20 lg:pt-24">
+        {/* Hero Section */}
+        <section className="py-16 md:py-24 border-b border-border/50">
+          <div className="max-w-[1800px] mx-auto px-6 sm:px-8 lg:px-12">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-normal tracking-tight mb-6">
+              Stories
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl">
-              Stories, interviews, and insights from the world of contemporary art
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl font-serif italic">
+              Artist philosophy, cultural commentary, and the ideas that shape contemporary art
             </p>
           </div>
         </section>
 
-        <section className="py-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Articles Grid */}
+        <section className="py-16 md:py-24">
+          <div className="max-w-[1800px] mx-auto px-6 sm:px-8 lg:px-12">
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="space-y-4">
-                    <Skeleton className="aspect-[16/10] w-full" />
-                    <Skeleton className="h-8 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-1/2" />
+              <div className="space-y-24">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="max-w-4xl">
+                    <Skeleton className="aspect-[16/9] w-full mb-8" />
+                    <Skeleton className="h-10 w-3/4 mb-4" />
+                    <Skeleton className="h-6 w-full mb-2" />
+                    <Skeleton className="h-6 w-2/3" />
                   </div>
                 ))}
               </div>
             ) : posts.length === 0 ? (
-              <div className="text-center py-16">
-                <p className="text-muted-foreground text-lg mb-4">No journal entries yet</p>
-                <p className="text-sm text-muted-foreground">Check back soon for stories and insights.</p>
+              <div className="text-center py-24">
+                <p className="text-2xl font-serif text-muted-foreground mb-4">
+                  No stories yet
+                </p>
+                <p className="text-muted-foreground">
+                  Check back soon for essays and cultural commentary.
+                </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div className="space-y-24 lg:space-y-32">
                 {posts.map((post, index) => (
                   <Link 
                     key={post.id} 
                     to={`/journal/${post.slug}`}
-                    className={`group block ${index === 0 ? 'md:col-span-2' : ''}`}
+                    className="group block"
                   >
-                    <article>
-                      <div className={`relative overflow-hidden bg-muted mb-6 ${index === 0 ? 'aspect-[21/9]' : 'aspect-[16/10]'}`}>
-                        {post.cover_image_url ? (
+                    <article className={index === 0 ? "max-w-full" : "max-w-4xl"}>
+                      {/* Cover Image */}
+                      {post.cover_image_url && (
+                        <div className={`relative overflow-hidden bg-muted mb-8 md:mb-10 image-frame ${
+                          index === 0 ? "aspect-[21/9]" : "aspect-[16/9]"
+                        }`}>
                           <img
                             src={post.cover_image_url}
                             alt={post.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                           />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                            No image
-                          </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                       
-                      <div className="flex items-center gap-4 mb-3">
+                      {/* Meta */}
+                      <div className="flex items-center gap-4 mb-4 text-sm text-muted-foreground">
                         {post.artists && (
-                          <Badge variant="outline">{post.artists.name}</Badge>
+                          <span className="font-serif">{post.artists.name}</span>
                         )}
-                        {post.collections && (
-                          <Badge variant="outline">{post.collections.title}</Badge>
+                        {post.artists && post.published_at && (
+                          <span className="opacity-30">·</span>
                         )}
                         {post.published_at && (
-                          <span className="text-sm text-muted-foreground flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {new Date(post.published_at).toLocaleDateString('en-US', { 
-                              month: 'long', 
-                              day: 'numeric', 
-                              year: 'numeric' 
-                            })}
-                          </span>
+                          <time className="font-serif">{formatDate(post.published_at)}</time>
                         )}
+                        <span className="opacity-30">·</span>
+                        <span className="font-serif">{estimateReadTime(post.excerpt)}</span>
                       </div>
                       
-                      <h2 className={`font-serif font-medium mb-3 group-hover:text-muted-foreground transition-colors ${index === 0 ? 'text-3xl md:text-4xl' : 'text-2xl'}`}>
+                      {/* Title */}
+                      <h2 className={`font-serif font-normal tracking-tight mb-4 transition-opacity duration-300 group-hover:opacity-70 ${
+                        index === 0 
+                          ? "text-3xl sm:text-4xl md:text-5xl lg:text-6xl" 
+                          : "text-2xl sm:text-3xl md:text-4xl"
+                      }`}>
                         {post.title}
                       </h2>
                       
+                      {/* Excerpt */}
                       {post.excerpt && (
-                        <p className="text-muted-foreground line-clamp-3">
+                        <p className="text-lg text-muted-foreground font-serif leading-relaxed max-w-2xl">
                           {post.excerpt}
                         </p>
                       )}

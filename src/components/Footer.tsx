@@ -1,106 +1,90 @@
 import { Link } from "react-router-dom";
-import { Instagram, Twitter, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-background border-t border-border">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-12">
+    <footer className="border-t border-border/50 bg-background">
+      <div className="max-w-[1800px] mx-auto px-6 sm:px-8 lg:px-12 py-16 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
           {/* Brand */}
-          <div className="col-span-2 sm:col-span-1">
-            <h3 className="text-lg sm:text-xl font-serif font-medium mb-2 sm:mb-4">monarch</h3>
-            <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
-              Where Art Meets Story
+          <div className="lg:col-span-1">
+            <Link 
+              to="/" 
+              className="text-2xl font-serif font-medium tracking-tight hover:opacity-60 transition-opacity"
+            >
+              Monarch
+            </Link>
+            <p className="mt-4 text-sm text-muted-foreground font-serif leading-relaxed max-w-xs">
+              A curated platform for artists, ideas, and culture. 
+              Where serious art finds its home.
             </p>
-            <div className="flex gap-2 sm:gap-4">
-              <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
-                <Instagram className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
-                <Twitter className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
-                <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </Button>
-            </div>
           </div>
 
           {/* Explore */}
           <div>
-            <h4 className="text-xs sm:text-sm font-medium mb-2 sm:mb-4 uppercase tracking-wider">Explore</h4>
-            <ul className="space-y-2 sm:space-y-3">
-              <li>
-                <Link to="/explore" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Releases
-                </Link>
-              </li>
-              <li>
-                <Link to="/artists" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Artists
-                </Link>
-              </li>
-              <li>
-                <Link to="/collections" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Collections
-                </Link>
-              </li>
-            </ul>
+            <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-sans mb-6">Explore</h3>
+            <nav className="flex flex-col gap-3">
+              <Link to="/artists" className="text-sm font-serif text-muted-foreground hover:text-foreground transition-colors">
+                Artists
+              </Link>
+              <Link to="/journal" className="text-sm font-serif text-muted-foreground hover:text-foreground transition-colors">
+                Stories
+              </Link>
+              <Link to="/collections" className="text-sm font-serif text-muted-foreground hover:text-foreground transition-colors">
+                Collections
+              </Link>
+              <Link to="/nfts" className="text-sm font-serif text-muted-foreground hover:text-foreground transition-colors">
+                Exhibitions
+              </Link>
+            </nav>
           </div>
 
-          {/* Work With Us */}
+          {/* Information */}
           <div>
-            <h4 className="text-xs sm:text-sm font-medium mb-2 sm:mb-4 uppercase tracking-wider">Work With Us</h4>
-            <ul className="space-y-2 sm:space-y-3">
-              <li>
-                <Link to="/apply-artist" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Apply as Artist
-                </Link>
-              </li>
-              <li>
-                <Link to="/collector-dashboard" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Collector Dashboard
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Contact
-                </Link>
-              </li>
-            </ul>
+            <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-sans mb-6">Information</h3>
+            <nav className="flex flex-col gap-3">
+              <Link to="/about" className="text-sm font-serif text-muted-foreground hover:text-foreground transition-colors">
+                About Monarch
+              </Link>
+              <Link to="/for-artists" className="text-sm font-serif text-muted-foreground hover:text-foreground transition-colors">
+                For Artists
+              </Link>
+              <Link to="/for-collectors" className="text-sm font-serif text-muted-foreground hover:text-foreground transition-colors">
+                For Collectors
+              </Link>
+              <Link to="/contact" className="text-sm font-serif text-muted-foreground hover:text-foreground transition-colors">
+                Contact
+              </Link>
+            </nav>
           </div>
 
-          {/* Newsletter */}
-          <div className="col-span-2 sm:col-span-2 lg:col-span-1">
-            <h4 className="text-xs sm:text-sm font-medium mb-2 sm:mb-4 uppercase tracking-wider">Newsletter</h4>
-            <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
-              Stay updated with new releases
+          {/* Newsletter - Simple */}
+          <div>
+            <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-sans mb-6">Stay Informed</h3>
+            <p className="text-sm text-muted-foreground font-serif mb-4">
+              Occasional updates on new artists, exhibitions, and cultural commentary.
             </p>
-            <div className="flex gap-2 max-w-xs">
-              <Input 
-                type="email" 
-                placeholder="Your email" 
-                className="text-xs sm:text-sm h-9"
-              />
-              <Button variant="default" size="sm" className="h-9 px-3 sm:px-4 text-xs sm:text-sm">
-                Join
-              </Button>
-            </div>
+            <Link 
+              to="/" 
+              className="text-sm font-serif underline underline-offset-4 hover:opacity-70 transition-opacity"
+            >
+              Subscribe to Newsletter
+            </Link>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="pt-6 sm:pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
-          <p className="text-[10px] sm:text-xs text-muted-foreground text-center sm:text-left">
-            © Monarch Gallery 2025. All rights reserved.
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-border/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-muted-foreground font-serif">
+            © {currentYear} Monarch. All rights reserved.
           </p>
-          <div className="flex gap-4 sm:gap-6">
-            <Link to="/terms" className="text-[10px] sm:text-xs text-muted-foreground hover:text-foreground transition-colors">
-              Terms
-            </Link>
-            <Link to="/privacy" className="text-[10px] sm:text-xs text-muted-foreground hover:text-foreground transition-colors">
+          <div className="flex items-center gap-6">
+            <Link to="/about" className="text-xs text-muted-foreground font-serif hover:text-foreground transition-colors">
               Privacy
+            </Link>
+            <Link to="/about" className="text-xs text-muted-foreground font-serif hover:text-foreground transition-colors">
+              Terms
             </Link>
           </div>
         </div>
