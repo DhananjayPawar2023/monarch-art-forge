@@ -4,7 +4,6 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -13,21 +12,21 @@ interface Artist {
   name: string;
   slug: string;
   specialty: string | null;
-  artwork_count: number | null;
-  avatar_url: string | null;
+  bio: string | null;
 }
 
 const Artists = () => {
   const { toast } = useToast();
   const [artists, setArtists] = useState<Artist[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<string>("all");
 
   useEffect(() => {
     const fetchArtists = async () => {
       try {
         const { data, error } = await supabase
           .from("artists")
-          .select("id, name, slug, specialty, artwork_count, avatar_url")
+          .select("id, name, slug, specialty, bio")
           .order("name", { ascending: true });
 
         if (error) throw error;
@@ -47,93 +46,115 @@ const Artists = () => {
     fetchArtists();
   }, [toast]);
 
+  const mediums = ["all", "Painting", "Digital", "Photography", "Sculpture"];
+
+  const filteredArtists = filter === "all" 
+    ? artists 
+    : artists.filter(a => a.specialty?.toLowerCase().includes(filter.toLowerCase()));
+
   return (
     <>
       <SEO 
-        title="Artists"
-        description="Meet the visionaries behind the art. Discover emerging and established artists featured at Monarch Gallery."
+        title="Artists | Monarch"
+        description="Artists shaping culture across mediums and disciplines. A curated directory of contemporary voices."
       />
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-background">
         <Header />
         
-        <main className="flex-1 pt-16">
-        <section className="py-16 border-b border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-medium mb-6">
-              Artists
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl">
-              Meet the visionaries behind the art
-            </p>
-          </div>
-        </section>
+        <main className="flex-1 pt-20 lg:pt-24">
+          {/* Hero Section */}
+          <section className="py-16 md:py-24 border-b border-border">
+            <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif font-medium tracking-tight mb-8">
+                Artists
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+                Artists shaping culture across mediums and disciplines.
+              </p>
+            </div>
+          </section>
 
-        <section className="py-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
-                    <Skeleton className="aspect-[3/4] w-full" />
-                    <div className="space-y-3 pt-2">
+          {/* Filters - Minimal, text-based */}
+          <section className="py-8 border-b border-border">
+            <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
+              <nav className="flex flex-wrap gap-6 md:gap-8">
+                {mediums.map((medium) => (
+                  <button
+                    key={medium}
+                    onClick={() => setFilter(medium)}
+                    className={`text-sm font-serif tracking-wide transition-opacity duration-300 ${
+                      filter === medium 
+                        ? "opacity-100" 
+                        : "opacity-40 hover:opacity-70"
+                    }`}
+                  >
+                    {medium === "all" ? "All" : medium}
+                  </button>
+                ))}
+              </nav>
+            </div>
+          </section>
+
+          {/* Artists Grid */}
+          <section className="py-16 md:py-24">
+            <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="space-y-4">
                       <Skeleton className="h-8 w-3/4" />
-                      <Skeleton className="h-4 w-full" />
                       <Skeleton className="h-4 w-1/2" />
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : artists.length === 0 ? (
-              <div className="text-center py-16 max-w-md mx-auto">
-                <div className="mb-6 opacity-50">
-                  <svg className="w-24 h-24 mx-auto text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
+                  ))}
                 </div>
-                <h3 className="text-2xl font-serif font-medium mb-3">No Artists Yet</h3>
-                <p className="text-muted-foreground mb-6">
-                  Monarch Gallery is curating a select group of visionary artists. Join our growing community of creators.
-                </p>
-                <Link to="/apply-artist">
-                  <Button size="lg">Apply to Join Monarch</Button>
-                </Link>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {artists.map((artist) => (
-                  <Link 
-                    key={artist.slug} 
-                    to={`/artist/${artist.slug}`}
-                    className="group block"
-                  >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
-                      <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-                        {artist.avatar_url && (
-                          <img
-                            src={artist.avatar_url}
-                            alt={artist.name}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                        )}
-                      </div>
-                      <div className="space-y-3 pt-2">
-                        <h3 className="text-2xl font-serif font-medium group-hover:text-muted-foreground transition-colors">
+              ) : filteredArtists.length === 0 ? (
+                <div className="text-center py-24">
+                  <p className="text-lg text-muted-foreground font-serif">
+                    {filter === "all" 
+                      ? "Monarch is curating a select group of artists."
+                      : "No artists found in this medium."}
+                  </p>
+                  {filter === "all" && (
+                    <Link 
+                      to="/apply-artist" 
+                      className="inline-block mt-8 text-sm font-serif tracking-wide opacity-60 hover:opacity-100 transition-opacity"
+                    >
+                      Apply to Join →
+                    </Link>
+                  )}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
+                  {filteredArtists.map((artist) => (
+                    <Link 
+                      key={artist.slug} 
+                      to={`/artist/${artist.slug}`}
+                      className="group block"
+                    >
+                      <article className="space-y-3">
+                        {/* Artist Name - Dominant, serif */}
+                        <h2 className="text-2xl md:text-3xl font-serif font-medium tracking-tight group-hover:opacity-60 transition-opacity duration-300">
                           {artist.name}
-                        </h3>
+                        </h2>
+                        
+                        {/* Medium - Very subtle */}
                         {artist.specialty && (
-                          <p className="text-muted-foreground">{artist.specialty}</p>
+                          <p className="text-sm text-muted-foreground tracking-wide">
+                            {artist.specialty}
+                          </p>
                         )}
-                        <p className="text-sm">
-                          {artist.artwork_count || 0} {artist.artwork_count === 1 ? 'artwork' : 'artworks'}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+                        
+                        {/* Hover reveal */}
+                        <span className="block text-sm font-serif opacity-0 group-hover:opacity-60 transition-opacity duration-300">
+                          View Artist
+                        </span>
+                      </article>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
         </main>
 
         <Footer />

@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
-import ArtworkCard from "@/components/ArtworkCard";
-import FadeIn from "@/components/FadeIn";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -16,9 +13,8 @@ interface Artwork {
   slug: string;
   primary_image_url: string | null;
   price_usd: number | null;
-  edition_total: number | null;
   medium: string | null;
-  tags: string[] | null;
+  year: number | null;
   artists: {
     name: string;
   };
@@ -33,6 +29,8 @@ const Explore = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const itemsPerPage = 12;
+
+  const mediums = ["all", "Painting", "Digital", "Photography", "Sculpture"];
 
   const fetchArtworks = async (loadMore = false) => {
     try {
@@ -49,9 +47,8 @@ const Explore = () => {
           slug,
           primary_image_url,
           price_usd,
-          edition_total,
           medium,
-          tags,
+          year,
           created_at,
           view_count,
           artists (name)
@@ -59,12 +56,10 @@ const Explore = () => {
         .eq("status", "published")
         .range(from, to);
 
-      // Apply medium filter
       if (filterMedium !== "all") {
         query = query.ilike("medium", `%${filterMedium}%`);
       }
 
-      // Apply sorting
       switch (sortBy) {
         case "price-low":
           query = query.order("price_usd", { ascending: true, nullsFirst: false });
@@ -72,10 +67,7 @@ const Explore = () => {
         case "price-high":
           query = query.order("price_usd", { ascending: false, nullsFirst: false });
           break;
-        case "popular":
-          query = query.order("view_count", { ascending: false });
-          break;
-        default: // newest
+        default:
           query = query.order("created_at", { ascending: false });
       }
 
@@ -116,133 +108,154 @@ const Explore = () => {
   return (
     <>
       <SEO 
-        title="Explore Artworks"
-        description="Discover curated artworks from emerging and established artists. Browse paintings, digital art, photography, and sculpture."
+        title="Explore | Monarch"
+        description="Discover curated artworks from contemporary artists across mediums."
       />
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-background">
         <Header />
         
-        <main className="flex-1 pt-16">
-        {/* Hero */}
-        <section className="py-16 border-b border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-medium mb-6">
-              Explore
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl">
-              Discover curated artworks from emerging and established artists
-            </p>
-          </div>
-        </section>
-
-        {/* Filters & Sort */}
-        <section className="py-8 border-b border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div className="flex flex-wrap gap-2">
-                <Button 
-                  variant={filterMedium === "all" ? "outline" : "ghost"} 
-                  size="sm"
-                  onClick={() => setFilterMedium("all")}
-                >
-                  All
-                </Button>
-                <Button 
-                  variant={filterMedium === "painting" ? "outline" : "ghost"} 
-                  size="sm"
-                  onClick={() => setFilterMedium("painting")}
-                >
-                  Paintings
-                </Button>
-                <Button 
-                  variant={filterMedium === "digital" ? "outline" : "ghost"} 
-                  size="sm"
-                  onClick={() => setFilterMedium("digital")}
-                >
-                  Digital
-                </Button>
-                <Button 
-                  variant={filterMedium === "photography" ? "outline" : "ghost"} 
-                  size="sm"
-                  onClick={() => setFilterMedium("photography")}
-                >
-                  Photography
-                </Button>
-                <Button 
-                  variant={filterMedium === "sculpture" ? "outline" : "ghost"} 
-                  size="sm"
-                  onClick={() => setFilterMedium("sculpture")}
-                >
-                  Sculpture
-                </Button>
-              </div>
-              
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                  <SelectItem value="popular">Most Popular</SelectItem>
-                </SelectContent>
-              </Select>
+        <main className="flex-1 pt-20 lg:pt-24">
+          {/* Hero Section */}
+          <section className="py-16 md:py-24 border-b border-border">
+            <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif font-medium tracking-tight mb-8">
+                Explore
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+                Discover curated artworks from contemporary artists.
+              </p>
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Artworks Grid */}
-        <section className="py-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            {loading && artworks.length === 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="space-y-4">
-                    <Skeleton className="aspect-square w-full" />
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                ))}
+          {/* Filters - Minimal, text-based */}
+          <section className="py-8 border-b border-border">
+            <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                {/* Medium filters */}
+                <nav className="flex flex-wrap gap-6 md:gap-8">
+                  {mediums.map((medium) => (
+                    <button
+                      key={medium}
+                      onClick={() => setFilterMedium(medium)}
+                      className={`text-sm font-serif tracking-wide transition-opacity duration-300 ${
+                        filterMedium === medium 
+                          ? "opacity-100" 
+                          : "opacity-40 hover:opacity-70"
+                      }`}
+                    >
+                      {medium === "all" ? "All" : medium}
+                    </button>
+                  ))}
+                </nav>
+                
+                {/* Sort - Subtle */}
+                <div className="flex items-center gap-4">
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Sort</span>
+                  <nav className="flex gap-4">
+                    {[
+                      { value: "newest", label: "Recent" },
+                      { value: "price-low", label: "Price ↑" },
+                      { value: "price-high", label: "Price ↓" },
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => setSortBy(option.value)}
+                        className={`text-sm font-serif tracking-wide transition-opacity duration-300 ${
+                          sortBy === option.value 
+                            ? "opacity-100" 
+                            : "opacity-40 hover:opacity-70"
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </nav>
+                </div>
               </div>
-            ) : artworks.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">
-                  No artworks found. Try adjusting your filters.
-                </p>
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-                  {artworks.map((artwork) => (
-                    <ArtworkCard 
-                      key={artwork.id}
-                      id={artwork.id}
-                      title={artwork.title}
-                      artistName={artwork.artists.name}
-                      image={artwork.primary_image_url || ""}
-                      price={artwork.price_usd ? `$${artwork.price_usd.toLocaleString()}` : undefined}
-                      edition={artwork.edition_total === 1 ? "1/1" : `Edition of ${artwork.edition_total}`}
-                    />
+            </div>
+          </section>
+
+          {/* Artworks Grid */}
+          <section className="py-16 md:py-24">
+            <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
+              {loading && artworks.length === 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="space-y-4">
+                      <Skeleton className="aspect-[4/5] w-full" />
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                    </div>
                   ))}
                 </div>
-                
-                {hasMore && (
-                  <div className="mt-16 text-center">
-                    <Button 
-                      variant="outline" 
-                      size="lg"
-                      onClick={handleLoadMore}
-                      disabled={loading}
-                    >
-                      {loading ? 'Loading...' : 'Load More'}
-                    </Button>
+              ) : artworks.length === 0 ? (
+                <div className="text-center py-24">
+                  <p className="text-lg text-muted-foreground font-serif">
+                    No artworks found. Try adjusting your filters.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+                    {artworks.map((artwork) => {
+                      const imageUrl = artwork.primary_image_url || 
+                        "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=800&q=80";
+
+                      return (
+                        <Link 
+                          key={artwork.id} 
+                          to={`/artwork/${artwork.slug || artwork.id}`}
+                          className="group block"
+                        >
+                          <article>
+                            {/* Artwork Image - Gallery style */}
+                            <div className="relative aspect-[4/5] overflow-hidden bg-muted mb-6 image-frame">
+                              <img
+                                src={imageUrl}
+                                alt={artwork.title}
+                                loading="lazy"
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02] hover-illuminate"
+                              />
+                            </div>
+                            
+                            {/* Artwork Info - Museum label style */}
+                            <div className="space-y-1">
+                              <h2 className="text-lg md:text-xl font-serif font-medium tracking-tight group-hover:opacity-70 transition-opacity duration-300">
+                                {artwork.title}
+                              </h2>
+                              
+                              <p className="text-sm text-muted-foreground">
+                                {artwork.artists?.name}
+                                {artwork.year && <span className="opacity-60">, {artwork.year}</span>}
+                              </p>
+                              
+                              {artwork.medium && (
+                                <p className="text-xs text-muted-foreground tracking-wide">
+                                  {artwork.medium}
+                                </p>
+                              )}
+                            </div>
+                          </article>
+                        </Link>
+                      );
+                    })}
                   </div>
-                )}
-              </>
-            )}
-          </div>
-        </section>
+                  
+                  {hasMore && (
+                    <div className="mt-24 text-center">
+                      <button 
+                        onClick={handleLoadMore}
+                        disabled={loading}
+                        className="text-sm font-serif tracking-wide opacity-60 hover:opacity-100 transition-opacity duration-300"
+                      >
+                        {loading ? 'Loading...' : 'Load More'}
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </section>
         </main>
 
         <Footer />
