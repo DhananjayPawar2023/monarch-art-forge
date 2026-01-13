@@ -18,6 +18,7 @@ import AdminAnalytics from "./pages/AdminAnalytics";
 import ArtistDashboard from "./pages/ArtistDashboard";
 import CollectorDashboard from "./pages/CollectorDashboard";
 import Journal from "./pages/Journal";
+import JournalPostDetail from "./pages/JournalPostDetail";
 import ApplyArtist from "./pages/ApplyArtist";
 import AdminArtworkEdit from "./pages/AdminArtworkEdit";
 import ForArtists from "./pages/ForArtists";
@@ -61,6 +62,7 @@ const App = () => (
                 <Route path="/artist-dashboard" element={<ArtistDashboard />} />
                 <Route path="/collector-dashboard" element={<CollectorDashboard />} />
                 <Route path="/journal" element={<Journal />} />
+                <Route path="/journal/:slug" element={<JournalPostDetail />} />
                 <Route path="/apply-artist" element={<ApplyArtist />} />
                 <Route path="/for-artists" element={<ForArtists />} />
                 <Route path="/for-collectors" element={<ForCollectors />} />
