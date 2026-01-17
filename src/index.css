@@ -143,6 +143,26 @@
   ::selection {
     @apply bg-foreground/10;
   }
+
+  /* Accessibility - Visible focus rings */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Remove default focus for mouse users */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Links focus state */
+  a:focus-visible {
+    @apply rounded-sm;
+  }
+
+  /* Button focus state */
+  button:focus-visible {
+    @apply rounded-sm;
+  }
 }
 
 /* Editorial Article Styles */

@@ -5,7 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ThemeProvider } from "@/hooks/useTheme";
 import { CartProvider } from "@/contexts/CartContext";
+import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
 import Explore from "./pages/Explore";
 import Artists from "./pages/Artists";
@@ -42,49 +44,53 @@ const queryClient = new QueryClient();
 const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <CartProvider>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/explore" element={<Explore />} />
-                <Route path="/artists" element={<Artists />} />
-                <Route path="/collections" element={<Collections />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/admin/artworks" element={<AdminArtworks />} />
-                <Route path="/admin/artwork/edit/:id" element={<AdminArtworkEdit />} />
-                <Route path="/admin/analytics" element={<AdminAnalytics />} />
-                <Route path="/artist-dashboard" element={<ArtistDashboard />} />
-                <Route path="/collector-dashboard" element={<CollectorDashboard />} />
-                <Route path="/journal" element={<Journal />} />
-                <Route path="/journal/:slug" element={<JournalPostDetail />} />
-                <Route path="/apply-artist" element={<ApplyArtist />} />
-                <Route path="/for-artists" element={<ForArtists />} />
-                <Route path="/for-collectors" element={<ForCollectors />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/wishlist" element={<Wishlist />} />
-                <Route path="/secondary-market" element={<SecondaryMarket />} />
-                <Route path="/my-listings" element={<MyListings />} />
-                <Route path="/mint" element={<Mint />} />
-                <Route path="/nfts" element={<NFTGallery />} />
-                <Route path="/artwork/:id" element={<ArtworkDetail />} />
-                <Route path="/artist/:slug" element={<ArtistDetail />} />
-                <Route path="/collection/:slug" element={<CollectionDetail />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </CartProvider>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <CartProvider>
+                <PageTransition>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/explore" element={<Explore />} />
+                    <Route path="/artists" element={<Artists />} />
+                    <Route path="/collections" element={<Collections />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/admin/artworks" element={<AdminArtworks />} />
+                    <Route path="/admin/artwork/edit/:id" element={<AdminArtworkEdit />} />
+                    <Route path="/admin/analytics" element={<AdminAnalytics />} />
+                    <Route path="/artist-dashboard" element={<ArtistDashboard />} />
+                    <Route path="/collector-dashboard" element={<CollectorDashboard />} />
+                    <Route path="/journal" element={<Journal />} />
+                    <Route path="/journal/:slug" element={<JournalPostDetail />} />
+                    <Route path="/apply-artist" element={<ApplyArtist />} />
+                    <Route path="/for-artists" element={<ForArtists />} />
+                    <Route path="/for-collectors" element={<ForCollectors />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/wishlist" element={<Wishlist />} />
+                    <Route path="/secondary-market" element={<SecondaryMarket />} />
+                    <Route path="/my-listings" element={<MyListings />} />
+                    <Route path="/mint" element={<Mint />} />
+                    <Route path="/nfts" element={<NFTGallery />} />
+                    <Route path="/artwork/:id" element={<ArtworkDetail />} />
+                    <Route path="/artist/:slug" element={<ArtistDetail />} />
+                    <Route path="/collection/:slug" element={<CollectionDetail />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </PageTransition>
+              </CartProvider>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </HelmetProvider>
 );
