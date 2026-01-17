@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,6 +14,43 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isAdmin, signOut } = useAuth();
   const location = useLocation();
+
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      // Store current scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Restore scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    }
+
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
+
+  // Close menu on route change
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
 
   // Editorial navigation - no web3/crypto language, museum-grade
   const primaryNav = [
@@ -37,7 +74,7 @@ const Header = () => {
             {/* Logo - Left aligned, serif */}
             <Link 
               to="/" 
-              className="text-xl lg:text-2xl font-serif font-medium tracking-tight hover:opacity-60 transition-opacity duration-300"
+              className="text-xl lg:text-2xl font-serif font-medium tracking-tight hover:opacity-70 transition-opacity duration-300"
             >
               Monarch
             </Link>
@@ -48,10 +85,10 @@ const Header = () => {
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`text-sm font-serif tracking-wide transition-opacity duration-300 ${
+                  className={`relative text-sm font-serif tracking-wide transition-all duration-300 ${
                     isActive(link.href) 
-                      ? "opacity-100" 
-                      : "opacity-50 hover:opacity-100"
+                      ? "text-foreground after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-px after:bg-foreground/60" 
+                      : "text-foreground/70 hover:text-foreground"
                   }`}
                 >
                   {link.label}
@@ -64,7 +101,7 @@ const Header = () => {
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild className="hidden lg:flex">
-                    <button className="text-sm font-serif tracking-wide opacity-50 hover:opacity-100 transition-opacity duration-300">
+                    <button className="text-sm font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors duration-300">
                       Account
                     </button>
                   </DropdownMenuTrigger>
@@ -103,7 +140,7 @@ const Header = () => {
               ) : (
                 <Link 
                   to="/auth" 
-                  className="hidden lg:block text-sm font-serif tracking-wide opacity-50 hover:opacity-100 transition-opacity duration-300"
+                  className="hidden lg:block text-sm font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors duration-300"
                 >
                   Enter Monarch
                 </Link>
@@ -125,15 +162,29 @@ const Header = () => {
         </div>
       </header>
 
+      {/* Backdrop overlay */}
+      <div 
+        className={`fixed inset-0 z-[99] bg-background/80 backdrop-blur-sm lg:hidden transition-opacity duration-300 ${
+          isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setIsMenuOpen(false)}
+        aria-hidden="true"
+      />
+
       {/* Full-screen Mobile Menu - Gallery entrance feel */}
       <div 
-        className={`fixed inset-0 z-[100] bg-background transition-transform duration-500 ease-out lg:hidden ${
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed inset-0 z-[100] bg-background lg:hidden transition-all duration-500 ease-out ${
+          isMenuOpen 
+            ? "opacity-100 translate-x-0" 
+            : "opacity-0 translate-x-full pointer-events-none"
         }`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
       >
-        <div className="h-full flex flex-col">
-          {/* Mobile Header */}
-          <div className="flex items-center justify-between px-6 h-16 border-b border-border/40">
+        <div className="h-full w-full flex flex-col">
+          {/* Mobile Header - Fixed at top */}
+          <div className="flex-shrink-0 flex items-center justify-between px-6 h-16 border-b border-border/40">
             <Link 
               to="/" 
               onClick={() => setIsMenuOpen(false)}
@@ -143,25 +194,25 @@ const Header = () => {
             </Link>
             <button
               onClick={() => setIsMenuOpen(false)}
-              className="p-2 -mr-2"
+              className="p-2 -mr-2 hover:opacity-70 transition-opacity"
               aria-label="Close menu"
             >
               <X className="w-5 h-5" strokeWidth={1.5} />
             </button>
           </div>
 
-          {/* Mobile Navigation - Large typography, breathing space */}
-          <nav className="flex-1 flex flex-col justify-center px-8 pb-24 overflow-y-auto">
-            <div className="space-y-8">
+          {/* Mobile Navigation - Large typography, breathing space, centered */}
+          <nav className="flex-1 flex flex-col justify-center px-8 overflow-y-auto">
+            <div className="space-y-6 sm:space-y-8">
               {primaryNav.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block text-3xl sm:text-4xl font-serif tracking-tight transition-opacity duration-300 ${
+                  className={`block text-3xl sm:text-4xl font-serif tracking-tight transition-colors duration-300 ${
                     isActive(link.href) 
-                      ? "opacity-100" 
-                      : "opacity-40 hover:opacity-100"
+                      ? "text-foreground border-l-2 border-foreground pl-4" 
+                      : "text-foreground/80 hover:text-foreground"
                   }`}
                 >
                   {link.label}
@@ -170,23 +221,23 @@ const Header = () => {
             </div>
 
             {/* Divider */}
-            <div className="my-12 border-t border-border/40 w-16" />
+            <div className="my-10 sm:my-12 border-t border-border/40 w-16" />
 
             {/* Enter Monarch - Ceremonial */}
             <Link
               to={user ? "/collector-dashboard" : "/auth"}
               onClick={() => setIsMenuOpen(false)}
-              className="text-lg font-serif tracking-wide opacity-50 hover:opacity-100 transition-opacity duration-300"
+              className="text-lg font-serif tracking-wide text-foreground/80 hover:text-foreground transition-colors duration-300"
             >
               {user ? "My Collection" : "Enter Monarch"}
             </Link>
 
             {user && (
-              <div className="mt-8 space-y-5">
+              <div className="mt-6 sm:mt-8 space-y-4 sm:space-y-5">
                 <Link
                   to="/artist-dashboard"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block text-base font-serif tracking-wide opacity-40 hover:opacity-100 transition-opacity"
+                  className="block text-base font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors"
                 >
                   Artist Studio
                 </Link>
@@ -194,7 +245,7 @@ const Header = () => {
                   <Link
                     to="/admin"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block text-base font-serif tracking-wide opacity-40 hover:opacity-100 transition-opacity"
+                    className="block text-base font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors"
                   >
                     Administration
                   </Link>
@@ -204,13 +255,16 @@ const Header = () => {
                     signOut();
                     setIsMenuOpen(false);
                   }}
-                  className="block text-base font-serif tracking-wide opacity-40 hover:opacity-100 transition-opacity"
+                  className="block text-base font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors"
                 >
                   Leave
                 </button>
               </div>
             )}
           </nav>
+
+          {/* Bottom spacer for safe area */}
+          <div className="flex-shrink-0 h-8 sm:h-12" />
         </div>
       </div>
     </>
