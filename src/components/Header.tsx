@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/hooks/useTheme";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +14,7 @@ import {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isAdmin, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
 
   // Lock body scroll when menu is open
@@ -74,7 +76,7 @@ const Header = () => {
             {/* Logo - Left aligned, serif */}
             <Link 
               to="/" 
-              className="text-xl lg:text-2xl font-serif font-medium tracking-tight hover:opacity-70 transition-opacity duration-300"
+              className="text-xl lg:text-2xl font-serif font-medium tracking-tight hover:opacity-70 transition-opacity duration-300 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
             >
               Monarch
             </Link>
@@ -85,7 +87,7 @@ const Header = () => {
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`relative text-sm font-serif tracking-wide transition-all duration-300 ${
+                  className={`relative text-sm font-serif tracking-wide transition-all duration-300 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm ${
                     isActive(link.href) 
                       ? "text-foreground after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-px after:bg-foreground/60" 
                       : "text-foreground/70 hover:text-foreground"
@@ -96,12 +98,20 @@ const Header = () => {
               ))}
             </nav>
 
-            {/* Right side - Enter Monarch (ceremonial) */}
-            <div className="flex items-center gap-6">
+            {/* Right side - Theme toggle + Enter Monarch */}
+            <div className="flex items-center gap-4 lg:gap-6">
+              {/* Day/Night toggle - Desktop only */}
+              <button
+                onClick={toggleTheme}
+                className="hidden lg:block text-xs font-sans uppercase tracking-widest text-foreground/60 hover:text-foreground transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+              >
+                {theme === "light" ? "Night" : "Day"}
+              </button>
+
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild className="hidden lg:flex">
-                    <button className="text-sm font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors duration-300">
+                    <button className="text-sm font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm">
                       Account
                     </button>
                   </DropdownMenuTrigger>
@@ -140,7 +150,7 @@ const Header = () => {
               ) : (
                 <Link 
                   to="/auth" 
-                  className="hidden lg:block text-sm font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors duration-300"
+                  className="hidden lg:block text-sm font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
                 >
                   Enter Monarch
                 </Link>
@@ -149,7 +159,7 @@ const Header = () => {
               {/* Mobile Menu Toggle - Minimal hamburger */}
               <button
                 onClick={() => setIsMenuOpen(true)}
-                className="lg:hidden p-2 -mr-2"
+                className="lg:hidden p-2 -mr-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
                 aria-label="Open menu"
               >
                 <div className="w-6 flex flex-col gap-1.5">
@@ -194,7 +204,7 @@ const Header = () => {
             </Link>
             <button
               onClick={() => setIsMenuOpen(false)}
-              className="p-2 -mr-2 hover:opacity-70 transition-opacity"
+              className="p-2 -mr-2 hover:opacity-70 transition-opacity focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
               aria-label="Close menu"
             >
               <X className="w-5 h-5" strokeWidth={1.5} />
@@ -261,6 +271,14 @@ const Header = () => {
                 </button>
               </div>
             )}
+
+            {/* Mobile Day/Night toggle */}
+            <button
+              onClick={toggleTheme}
+              className="mt-8 text-sm font-sans uppercase tracking-widest text-foreground/60 hover:text-foreground transition-colors duration-300 text-left"
+            >
+              {theme === "light" ? "Night Mode" : "Day Mode"}
+            </button>
           </nav>
 
           {/* Bottom spacer for safe area */}
