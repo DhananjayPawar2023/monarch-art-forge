@@ -25,7 +25,6 @@ const Index = () => {
   }, []);
 
   const fetchFeaturedContent = async () => {
-    // Fetch featured artworks with artist info
     const { data: artworks } = await supabase
       .from('artworks')
       .select(`
@@ -54,7 +53,6 @@ const Index = () => {
       );
     }
 
-    // Fetch featured artist
     const { data: artist } = await supabase
       .from('artists')
       .select('*')
@@ -131,23 +129,25 @@ const Index = () => {
       <Header />
       
       <main className="flex-1">
+        {/* Hero Section - Editorial, ceremonial feel */}
         <section className="pt-32 pb-24 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center space-y-8">
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif font-medium leading-tight">
+              {/* Hero heading with tightened letter-spacing for bespoke feel */}
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif font-medium leading-tight hero-heading tracking-[-0.04em]">
                 Where Art<br />Meets Story
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                 A curated platform showcasing digital and physical artworks from visionary artists
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
                 <Link to="/explore">
-                  <Button size="lg" className="min-w-[160px]">
+                  <Button size="lg" className="min-w-[160px] transition-all duration-300 ease-in-out">
                     Explore Art
                   </Button>
                 </Link>
                 <Link to="/artists">
-                  <Button size="lg" variant="outline" className="min-w-[160px]">
+                  <Button size="lg" variant="outline" className="min-w-[160px] transition-all duration-300 ease-in-out">
                     Meet Artists
                   </Button>
                 </Link>
@@ -156,15 +156,16 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Featured Section */}
         <section className="py-24 border-t border-border">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-end mb-12">
               <div>
-                <h2 className="text-4xl md:text-5xl font-serif font-medium mb-4">Featured</h2>
+                <h2 className="text-4xl md:text-5xl font-serif font-medium mb-4 tracking-[-0.02em]">Featured</h2>
                 <p className="text-lg text-muted-foreground">Latest releases from our artists</p>
               </div>
               <Link to="/explore">
-                <Button variant="ghost" className="hidden sm:inline-flex">
+                <Button variant="ghost" className="hidden sm:inline-flex transition-all duration-300 ease-in-out">
                   View all →
                 </Button>
               </Link>
@@ -176,7 +177,7 @@ const Index = () => {
                   <ArtworkCard key={artwork.id} {...artwork} />
                 ))
               ) : (
-                <p className="col-span-3 text-center text-muted-foreground">
+                <p className="col-span-3 text-center text-muted-foreground font-serif">
                   No artworks available yet
                 </p>
               )}
@@ -195,12 +196,13 @@ const Index = () => {
           />
         )}
 
+        {/* Newsletter Section */}
         <section className="py-24 border-t border-border">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-4xl md:text-5xl font-serif font-medium mb-6">
+            <h2 className="text-4xl md:text-5xl font-serif font-medium mb-6 tracking-[-0.02em]">
               Join Our Community
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
               Be the first to discover new releases and artist stories
             </p>
             <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
@@ -210,9 +212,9 @@ const Index = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="flex-1"
+                className="flex-1 transition-all duration-300 ease-in-out"
               />
-              <Button size="lg" type="submit" disabled={subscribing}>
+              <Button size="lg" type="submit" disabled={subscribing} className="transition-all duration-300 ease-in-out">
                 {subscribing ? 'Subscribing...' : 'Subscribe'}
               </Button>
             </form>
