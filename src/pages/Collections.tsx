@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
-import { Skeleton } from "@/components/ui/skeleton";
+import OptimizedImage from "@/components/OptimizedImage";
+import { CollectionListSkeleton } from "@/components/SkeletonLoaders";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -66,7 +67,7 @@ const Collections = () => {
           {/* Hero Section */}
           <section className="py-16 md:py-24 border-b border-border">
             <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif font-medium tracking-tight mb-8">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif font-medium tracking-[-0.02em] mb-8">
                 Collections
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
@@ -79,15 +80,7 @@ const Collections = () => {
           <section className="py-16 md:py-24">
             <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
               {loading ? (
-                <div className="space-y-24">
-                  {[1, 2].map((i) => (
-                    <div key={i} className="space-y-6">
-                      <Skeleton className="aspect-[21/9] w-full" />
-                      <Skeleton className="h-10 w-2/3" />
-                      <Skeleton className="h-5 w-full max-w-xl" />
-                    </div>
-                  ))}
-                </div>
+                <CollectionListSkeleton count={3} />
               ) : collections.length === 0 ? (
                 <div className="text-center py-24">
                   <p className="text-lg text-muted-foreground font-serif">
@@ -103,31 +96,28 @@ const Collections = () => {
                       className="group block"
                     >
                       <article>
-                        {/* Full-width or large image */}
                         {collection.cover_image_url && (
                           <div className="relative aspect-[21/9] md:aspect-[21/8] overflow-hidden bg-muted mb-8 image-frame">
-                            <img
+                            <OptimizedImage
                               src={collection.cover_image_url}
                               alt={collection.title}
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02] hover-illuminate"
+                              aspectRatio="landscape"
+                              className="w-full h-full transition-transform duration-700 ease-in-out group-hover:scale-[1.02]"
                             />
                           </div>
                         )}
                         
                         <div className="max-w-3xl">
-                          {/* Title - Large serif */}
-                          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-medium tracking-tight mb-4 group-hover:opacity-70 transition-opacity duration-300">
+                          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-medium tracking-tight mb-4 group-hover:text-foreground/70 transition-colors duration-300 ease-in-out">
                             {collection.title}
                           </h2>
                           
-                          {/* Curatorial description */}
                           {collection.description && (
                             <p className="text-lg text-muted-foreground leading-relaxed mb-4">
                               {collection.description}
                             </p>
                           )}
                           
-                          {/* Year / Curator - Subtle */}
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             {getYear(collection.published_at) && (
                               <span className="tracking-wide">{getYear(collection.published_at)}</span>
@@ -140,9 +130,8 @@ const Collections = () => {
                             )}
                           </div>
                           
-                          {/* Hover reveal */}
-                          <span className="block mt-6 text-sm font-serif opacity-0 group-hover:opacity-60 transition-opacity duration-300">
-                            View Collection
+                          <span className="block mt-6 text-sm font-serif text-foreground/50 group-hover:text-foreground/70 transition-colors duration-300 ease-in-out">
+                            View Collection →
                           </span>
                         </div>
                       </article>

@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { Link } from "react-router-dom";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ArtistListSkeleton } from "@/components/SkeletonLoaders";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -65,7 +65,7 @@ const Artists = () => {
           {/* Hero Section */}
           <section className="py-16 md:py-24 border-b border-border">
             <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif font-medium tracking-tight mb-8">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif font-medium tracking-[-0.02em] mb-8">
                 Artists
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
@@ -74,7 +74,7 @@ const Artists = () => {
             </div>
           </section>
 
-          {/* Filters - Minimal, text-based */}
+          {/* Filters */}
           <section className="py-8 border-b border-border">
             <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
               <nav className="flex flex-wrap gap-6 md:gap-8">
@@ -82,10 +82,10 @@ const Artists = () => {
                   <button
                     key={medium}
                     onClick={() => setFilter(medium)}
-                    className={`text-sm font-serif tracking-wide transition-opacity duration-300 ${
+                    className={`text-sm font-serif tracking-wide transition-all duration-300 ease-in-out ${
                       filter === medium 
-                        ? "opacity-100" 
-                        : "opacity-40 hover:opacity-70"
+                        ? "text-foreground" 
+                        : "text-foreground/50 hover:text-foreground/80"
                     }`}
                   >
                     {medium === "all" ? "All" : medium}
@@ -99,14 +99,7 @@ const Artists = () => {
           <section className="py-16 md:py-24">
             <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
               {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="space-y-4">
-                      <Skeleton className="h-8 w-3/4" />
-                      <Skeleton className="h-4 w-1/2" />
-                    </div>
-                  ))}
-                </div>
+                <ArtistListSkeleton count={6} />
               ) : filteredArtists.length === 0 ? (
                 <div className="text-center py-24">
                   <p className="text-lg text-muted-foreground font-serif">
@@ -117,7 +110,7 @@ const Artists = () => {
                   {filter === "all" && (
                     <Link 
                       to="/apply-artist" 
-                      className="inline-block mt-8 text-sm font-serif tracking-wide opacity-60 hover:opacity-100 transition-opacity"
+                      className="inline-block mt-8 text-sm font-serif tracking-wide text-foreground/60 hover:text-foreground transition-colors duration-300 ease-in-out"
                     >
                       Apply to Join →
                     </Link>
@@ -132,21 +125,18 @@ const Artists = () => {
                       className="group block"
                     >
                       <article className="space-y-3">
-                        {/* Artist Name - Dominant, serif */}
-                        <h2 className="text-2xl md:text-3xl font-serif font-medium tracking-tight group-hover:opacity-60 transition-opacity duration-300">
+                        <h2 className="text-2xl md:text-3xl font-serif font-medium tracking-tight group-hover:text-foreground/60 transition-colors duration-300 ease-in-out">
                           {artist.name}
                         </h2>
                         
-                        {/* Medium - Very subtle */}
                         {artist.specialty && (
                           <p className="text-sm text-muted-foreground tracking-wide">
                             {artist.specialty}
                           </p>
                         )}
                         
-                        {/* Hover reveal */}
-                        <span className="block text-sm font-serif opacity-0 group-hover:opacity-60 transition-opacity duration-300">
-                          View Artist
+                        <span className="block text-sm font-serif text-foreground/50 group-hover:text-foreground/70 transition-colors duration-300 ease-in-out">
+                          View Artist →
                         </span>
                       </article>
                     </Link>

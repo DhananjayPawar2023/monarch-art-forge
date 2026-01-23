@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { CartProvider } from "@/contexts/CartContext";
 import PageTransition from "@/components/PageTransition";
+import GrainOverlay from "@/components/GrainOverlay";
 import Index from "./pages/Index";
 import Explore from "./pages/Explore";
 import Artists from "./pages/Artists";
@@ -48,6 +49,8 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          {/* Subtle film grain texture overlay */}
+          <GrainOverlay />
           <BrowserRouter>
             <AuthProvider>
               <CartProvider>
