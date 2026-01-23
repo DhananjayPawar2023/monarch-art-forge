@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { X } from "lucide-react";
+import { X, Search, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
+import SearchOverlay from "@/components/SearchOverlay";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// Preview images for each nav category - abstract, architectural, artistic
+// Preview images for each nav category
 const navPreviewImages: Record<string, string> = {
   "/explore": "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&q=80",
   "/artists": "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=1200&q=80",
@@ -23,8 +24,16 @@ const navPreviewImages: Record<string, string> = {
   "/about": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1200&q=80",
 };
 
+// Featured content for mobile menu
+const featuredExhibition = {
+  title: "Digital Horizons",
+  artist: "Various Artists",
+  image: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=600&q=80",
+};
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const { user, isAdmin, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -73,7 +82,6 @@ const Header = () => {
     { label: "Collections", href: "/collections" },
     { label: "Exhibitions", href: "/nfts" },
     { label: "Editions", href: "/secondary-market" },
-    { label: "About", href: "/about" },
   ];
 
   const isActive = (href: string) => location.pathname === href;
@@ -81,18 +89,33 @@ const Header = () => {
   return (
     <>
       {/* Desktop Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border/40">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/40">
         <div className="max-w-[1800px] mx-auto px-6 sm:px-8 lg:px-12">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo - Tightened letter-spacing */}
-            <Link 
-              to="/" 
-              className="text-xl lg:text-2xl font-serif font-medium tracking-[-0.03em] hover:opacity-70 transition-opacity duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
-            >
-              Monarch
-            </Link>
+            {/* Left: Logo with Theme Toggle */}
+            <div className="flex items-center gap-4">
+              <Link 
+                to="/" 
+                className="text-xl lg:text-2xl font-serif font-medium tracking-[-0.03em] hover:opacity-70 transition-opacity duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+              >
+                Monarch
+              </Link>
+              
+              {/* Theme Toggle - Minimal icon */}
+              <button
+                onClick={toggleTheme}
+                className="hidden lg:flex items-center justify-center w-8 h-8 text-foreground/50 hover:text-foreground transition-colors duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-full"
+                aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+              >
+                {theme === "light" ? (
+                  <Moon className="w-4 h-4" strokeWidth={1.5} />
+                ) : (
+                  <Sun className="w-4 h-4" strokeWidth={1.5} />
+                )}
+              </button>
+            </div>
 
-            {/* Desktop Navigation with hover preview area */}
+            {/* Center: Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8 xl:gap-10 relative">
               {/* Background preview image */}
               <AnimatePresence>
@@ -132,12 +155,14 @@ const Header = () => {
             </nav>
 
             {/* Right side */}
-            <div className="flex items-center gap-4 lg:gap-6">
+            <div className="flex items-center gap-3 lg:gap-5">
+              {/* Search Icon */}
               <button
-                onClick={toggleTheme}
-                className="hidden lg:block text-xs font-sans uppercase tracking-widest text-foreground/60 hover:text-foreground transition-colors duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+                onClick={() => setIsSearchOpen(true)}
+                className="flex items-center justify-center w-8 h-8 text-foreground/60 hover:text-foreground transition-colors duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-full"
+                aria-label="Open search"
               >
-                {theme === "light" ? "Night" : "Day"}
+                <Search className="w-4 h-4" strokeWidth={1.5} />
               </button>
 
               {user ? (
@@ -163,6 +188,11 @@ const Header = () => {
                         Saved Works
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/cart" className="font-serif text-sm">
+                        Cart
+                      </Link>
+                    </DropdownMenuItem>
                     {isAdmin && (
                       <>
                         <DropdownMenuSeparator />
@@ -184,7 +214,7 @@ const Header = () => {
                   to="/auth" 
                   className="hidden lg:block text-sm font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
                 >
-                  Enter Monarch
+                  Enter
                 </Link>
               )}
 
@@ -227,13 +257,26 @@ const Header = () => {
         <div className="h-full w-full flex flex-col">
           {/* Mobile Header */}
           <div className="flex-shrink-0 flex items-center justify-between px-6 h-16 border-b border-border/40">
-            <Link 
-              to="/" 
-              onClick={() => setIsMenuOpen(false)}
-              className="text-xl font-serif font-medium tracking-[-0.03em]"
-            >
-              Monarch
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link 
+                to="/" 
+                onClick={() => setIsMenuOpen(false)}
+                className="text-xl font-serif font-medium tracking-[-0.03em]"
+              >
+                Monarch
+              </Link>
+              <button
+                onClick={toggleTheme}
+                className="flex items-center justify-center w-8 h-8 text-foreground/50 hover:text-foreground transition-colors"
+                aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+              >
+                {theme === "light" ? (
+                  <Moon className="w-4 h-4" strokeWidth={1.5} />
+                ) : (
+                  <Sun className="w-4 h-4" strokeWidth={1.5} />
+                )}
+              </button>
+            </div>
             <button
               onClick={() => setIsMenuOpen(false)}
               className="p-2 -mr-2 hover:opacity-70 transition-opacity duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
@@ -244,16 +287,16 @@ const Header = () => {
           </div>
 
           {/* Mobile Navigation */}
-          <nav className="flex-1 flex flex-col justify-center px-8 overflow-y-auto">
-            <div className="space-y-6 sm:space-y-8">
+          <nav className="flex-1 flex flex-col px-8 py-10 overflow-y-auto">
+            <div className="space-y-5">
               {primaryNav.map((link, index) => (
                 <motion.div
                   key={link.href}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={isMenuOpen ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={isMenuOpen ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
                   transition={{ 
                     duration: 0.4, 
-                    delay: index * 0.05,
+                    delay: index * 0.06,
                     ease: [0.4, 0, 0.2, 1]
                   }}
                 >
@@ -272,57 +315,93 @@ const Header = () => {
               ))}
             </div>
 
-            <div className="my-10 sm:my-12 border-t border-border/40 w-16" />
-
-            <Link
-              to={user ? "/collector-dashboard" : "/auth"}
-              onClick={() => setIsMenuOpen(false)}
-              className="text-lg font-serif tracking-wide text-foreground/80 hover:text-foreground transition-colors duration-300 ease-in-out"
+            {/* Featured Exhibition */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={isMenuOpen ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+              className="mt-auto pt-10"
             >
-              {user ? "My Collection" : "Enter Monarch"}
-            </Link>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-foreground/40 mb-4">
+                Featured Exhibition
+              </p>
+              <Link
+                to="/nfts"
+                onClick={() => setIsMenuOpen(false)}
+                className="group block"
+              >
+                <div className="relative aspect-[16/9] rounded-sm overflow-hidden bg-muted mb-3">
+                  <img
+                    src={featuredExhibition.image}
+                    alt={featuredExhibition.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <h4 className="font-serif text-lg group-hover:text-foreground/70 transition-colors">
+                  {featuredExhibition.title}
+                </h4>
+                <p className="text-sm text-foreground/50">{featuredExhibition.artist}</p>
+              </Link>
+            </motion.div>
 
-            {user && (
-              <div className="mt-6 sm:mt-8 space-y-4 sm:space-y-5">
-                <Link
-                  to="/artist-dashboard"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block text-base font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors duration-300 ease-in-out"
-                >
-                  Artist Studio
-                </Link>
-                {isAdmin && (
+            {/* Account links */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={isMenuOpen ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+              className="pt-8 mt-8 border-t border-border/40"
+            >
+              <Link
+                to={user ? "/collector-dashboard" : "/auth"}
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-lg font-serif tracking-wide text-foreground/80 hover:text-foreground transition-colors duration-300"
+              >
+                {user ? "My Collection" : "Enter Monarch"}
+              </Link>
+
+              {user && (
+                <div className="mt-4 space-y-3">
                   <Link
-                    to="/admin"
+                    to="/artist-dashboard"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block text-base font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors duration-300 ease-in-out"
+                    className="block text-base text-foreground/60 hover:text-foreground transition-colors"
                   >
-                    Administration
+                    Artist Studio
                   </Link>
-                )}
-                <button
-                  onClick={() => {
-                    signOut();
-                    setIsMenuOpen(false);
-                  }}
-                  className="block text-base font-serif tracking-wide text-foreground/70 hover:text-foreground transition-colors duration-300 ease-in-out"
-                >
-                  Leave
-                </button>
-              </div>
-            )}
-
-            <button
-              onClick={toggleTheme}
-              className="mt-8 text-sm font-sans uppercase tracking-widest text-foreground/60 hover:text-foreground transition-colors duration-300 ease-in-out text-left"
-            >
-              {theme === "light" ? "Night Mode" : "Day Mode"}
-            </button>
+                  <Link
+                    to="/cart"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block text-base text-foreground/60 hover:text-foreground transition-colors"
+                  >
+                    Cart
+                  </Link>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="block text-base text-foreground/60 hover:text-foreground transition-colors"
+                    >
+                      Administration
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="block text-base text-foreground/60 hover:text-foreground transition-colors"
+                  >
+                    Leave
+                  </button>
+                </div>
+              )}
+            </motion.div>
           </nav>
-
-          <div className="flex-shrink-0 h-8 sm:h-12" />
         </div>
       </div>
+
+      {/* Search Overlay */}
+      <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
 };
