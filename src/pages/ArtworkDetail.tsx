@@ -226,38 +226,38 @@ const ArtworkDetail = () => {
       />
 
       {/* Immersive Header Overlay */}
-      <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+      <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <Link
             to="/explore"
             className="flex items-center gap-2 text-white/70 hover:text-white transition-colors duration-300"
           >
-            <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
             <span className="text-sm font-serif hidden sm:inline">Back to Gallery</span>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={toggleWishlist}
               disabled={wishlistLoading}
-              className="p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
+              className="p-2 sm:p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
               aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
             >
-              <Heart className={`w-5 h-5 ${inWishlist ? 'fill-white' : ''}`} strokeWidth={1.5} />
+              <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${inWishlist ? 'fill-white' : ''}`} strokeWidth={1.5} />
             </button>
             <button
               onClick={() => setIsViewerOpen(true)}
-              className="p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
+              className="p-2 sm:p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 hidden sm:flex"
               aria-label="View full screen"
             >
-              <Expand className="w-5 h-5" strokeWidth={1.5} />
+              <Expand className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
             </button>
             <button
               onClick={() => setIsPanelOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
             >
-              <Info className="w-4 h-4" strokeWidth={1.5} />
-              <span className="text-sm font-serif">Details</span>
+              <Info className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={1.5} />
+              <span className="text-xs sm:text-sm font-serif">Details</span>
             </button>
           </div>
         </div>
@@ -269,7 +269,7 @@ const ArtworkDetail = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="absolute inset-0 flex items-center justify-center p-4 md:p-8 lg:p-12"
+          className="absolute inset-0 flex items-center justify-center p-4 pt-16 pb-32 sm:p-6 sm:pt-20 sm:pb-36 md:p-8 lg:p-12"
         >
           <div 
             className="relative max-w-6xl w-full h-full flex items-center justify-center cursor-pointer group"
@@ -280,8 +280,8 @@ const ArtworkDetail = () => {
               alt={artwork.title}
               className="max-w-full max-h-full object-contain shadow-2xl"
             />
-            {/* Hover overlay */}
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+            {/* Hover overlay - Hidden on mobile */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 hidden sm:flex items-center justify-center">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileHover={{ opacity: 1, scale: 1 }}
@@ -296,32 +296,32 @@ const ArtworkDetail = () => {
         </motion.div>
 
         {/* Bottom Info Bar */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 md:p-8">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-4 sm:p-6 md:p-8">
+          <div className="max-w-6xl mx-auto flex flex-col gap-4">
             <div>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-medium text-white mb-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-medium text-white mb-1 sm:mb-2 line-clamp-2">
                 {artwork.title}
               </h1>
               <Link 
                 to={`/artist/${artwork.artists?.slug}`}
-                className="text-lg text-white/70 hover:text-white transition-colors"
+                className="text-sm sm:text-base lg:text-lg text-white/70 hover:text-white transition-colors"
               >
                 {artwork.artists?.name || 'Unknown Artist'}
               </Link>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-2xl md:text-3xl font-serif text-white">
+            <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-3 sm:gap-4">
+              <div>
+                <p className="text-xl sm:text-2xl md:text-3xl font-serif text-white">
                   {artwork.price_usd ? `$${artwork.price_usd.toLocaleString()}` : 'Price on request'}
                 </p>
                 {artwork.price_eth && (
-                  <p className="text-sm text-white/60">{artwork.price_eth} ETH</p>
+                  <p className="text-xs sm:text-sm text-white/60">{artwork.price_eth} ETH</p>
                 )}
               </div>
               <Button
                 onClick={() => setIsPanelOpen(true)}
                 size="lg"
-                className="bg-white text-black hover:bg-white/90 border-0"
+                className="w-full sm:w-auto bg-white text-black hover:bg-white/90 border-0"
               >
                 View Details
               </Button>

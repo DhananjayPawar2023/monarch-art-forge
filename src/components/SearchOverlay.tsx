@@ -134,18 +134,18 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-          className="fixed inset-0 z-[200] bg-background/95 backdrop-blur-xl"
+          className="fixed inset-0 z-[200] bg-background/95 backdrop-blur-xl overflow-y-auto"
         >
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 p-2 text-foreground/60 hover:text-foreground transition-colors duration-300"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 text-foreground/60 hover:text-foreground transition-colors duration-300 z-10"
             aria-label="Close search"
           >
-            <X className="w-6 h-6" strokeWidth={1.5} />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={1.5} />
           </button>
 
-          <div className="h-full flex flex-col items-center justify-start pt-[20vh] px-6">
+          <div className="min-h-full flex flex-col items-center justify-start pt-20 sm:pt-[15vh] lg:pt-[20vh] px-4 sm:px-6 pb-8">
             {/* Search Input */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -154,14 +154,14 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
               className="w-full max-w-2xl"
             >
               <div className="relative">
-                <Search className="absolute left-0 top-1/2 -translate-y-1/2 w-6 h-6 text-foreground/40" strokeWidth={1.5} />
+                <Search className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 text-foreground/40" strokeWidth={1.5} />
                 <input
                   ref={inputRef}
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search artworks, artists, collections..."
-                  className="w-full pl-10 pr-4 py-4 text-2xl md:text-3xl font-serif bg-transparent border-b border-border/60 focus:border-foreground/40 focus:outline-none transition-colors duration-300 placeholder:text-foreground/30"
+                  placeholder="Search artworks, artists..."
+                  className="w-full pl-8 sm:pl-10 pr-4 py-3 sm:py-4 text-xl sm:text-2xl md:text-3xl font-serif bg-transparent border-b border-border/60 focus:border-foreground/40 focus:outline-none transition-colors duration-300 placeholder:text-foreground/30"
                 />
               </div>
 
@@ -215,10 +215,10 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05 }}
                           onClick={() => handleResultClick(result.slug)}
-                          className="w-full flex items-center gap-4 p-4 rounded-sm bg-muted/30 hover:bg-muted/60 transition-colors duration-300 group text-left"
+                          className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-sm bg-muted/30 hover:bg-muted/60 transition-colors duration-300 group text-left"
                         >
                           {result.image && (
-                            <div className="w-16 h-16 rounded-sm overflow-hidden bg-muted flex-shrink-0">
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-sm overflow-hidden bg-muted flex-shrink-0">
                               <img
                                 src={result.image}
                                 alt=""
@@ -230,7 +230,7 @@ const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                             <span className="text-[10px] uppercase tracking-widest text-foreground/40">
                               {result.type}
                             </span>
-                            <h4 className="text-lg font-serif truncate">{result.title}</h4>
+                            <h4 className="text-base sm:text-lg font-serif truncate">{result.title}</h4>
                             {result.subtitle && (
                               <p className="text-sm text-foreground/60 truncate">{result.subtitle}</p>
                             )}

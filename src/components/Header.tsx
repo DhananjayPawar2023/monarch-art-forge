@@ -287,8 +287,8 @@ const Header = () => {
           </div>
 
           {/* Mobile Navigation */}
-          <nav className="flex-1 flex flex-col px-8 py-10 overflow-y-auto">
-            <div className="space-y-5">
+          <nav className="flex-1 flex flex-col px-5 sm:px-8 py-6 sm:py-10 overflow-y-auto">
+            <div className="space-y-4 sm:space-y-5">
               {primaryNav.map((link, index) => (
                 <motion.div
                   key={link.href}
@@ -303,7 +303,7 @@ const Header = () => {
                   <Link
                     to={link.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`block text-3xl sm:text-4xl font-serif tracking-tight transition-colors duration-300 ease-in-out ${
+                    className={`block text-2xl sm:text-3xl md:text-4xl font-serif tracking-tight transition-colors duration-300 ease-in-out ${
                       isActive(link.href) 
                         ? "text-foreground border-l-2 border-foreground pl-4" 
                         : "text-foreground/80 hover:text-foreground"
@@ -320,9 +320,9 @@ const Header = () => {
               initial={{ opacity: 0 }}
               animate={isMenuOpen ? { opacity: 1 } : { opacity: 0 }}
               transition={{ duration: 0.4, delay: 0.4 }}
-              className="mt-auto pt-10"
+              className="mt-auto pt-8 sm:pt-10"
             >
-              <p className="text-[10px] uppercase tracking-[0.2em] text-foreground/40 mb-4">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-foreground/40 mb-3 sm:mb-4">
                 Featured Exhibition
               </p>
               <Link
@@ -330,17 +330,17 @@ const Header = () => {
                 onClick={() => setIsMenuOpen(false)}
                 className="group block"
               >
-                <div className="relative aspect-[16/9] rounded-sm overflow-hidden bg-muted mb-3">
+                <div className="relative aspect-[16/9] rounded-sm overflow-hidden bg-muted mb-2 sm:mb-3">
                   <img
                     src={featuredExhibition.image}
                     alt={featuredExhibition.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
-                <h4 className="font-serif text-lg group-hover:text-foreground/70 transition-colors">
+                <h4 className="font-serif text-base sm:text-lg group-hover:text-foreground/70 transition-colors">
                   {featuredExhibition.title}
                 </h4>
-                <p className="text-sm text-foreground/50">{featuredExhibition.artist}</p>
+                <p className="text-xs sm:text-sm text-foreground/50">{featuredExhibition.artist}</p>
               </Link>
             </motion.div>
 
@@ -349,29 +349,29 @@ const Header = () => {
               initial={{ opacity: 0 }}
               animate={isMenuOpen ? { opacity: 1 } : { opacity: 0 }}
               transition={{ duration: 0.4, delay: 0.5 }}
-              className="pt-8 mt-8 border-t border-border/40"
+              className="pt-6 sm:pt-8 mt-6 sm:mt-8 border-t border-border/40"
             >
               <Link
                 to={user ? "/collector-dashboard" : "/auth"}
                 onClick={() => setIsMenuOpen(false)}
-                className="block text-lg font-serif tracking-wide text-foreground/80 hover:text-foreground transition-colors duration-300"
+                className="block text-base sm:text-lg font-serif tracking-wide text-foreground/80 hover:text-foreground transition-colors duration-300"
               >
                 {user ? "My Collection" : "Enter Monarch"}
               </Link>
 
               {user && (
-                <div className="mt-4 space-y-3">
+                <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
                   <Link
                     to="/artist-dashboard"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block text-base text-foreground/60 hover:text-foreground transition-colors"
+                    className="block text-sm sm:text-base text-foreground/60 hover:text-foreground transition-colors"
                   >
                     Artist Studio
                   </Link>
                   <Link
                     to="/cart"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block text-base text-foreground/60 hover:text-foreground transition-colors"
+                    className="block text-sm sm:text-base text-foreground/60 hover:text-foreground transition-colors"
                   >
                     Cart
                   </Link>
@@ -379,7 +379,7 @@ const Header = () => {
                     <Link
                       to="/admin"
                       onClick={() => setIsMenuOpen(false)}
-                      className="block text-base text-foreground/60 hover:text-foreground transition-colors"
+                      className="block text-sm sm:text-base text-foreground/60 hover:text-foreground transition-colors"
                     >
                       Administration
                     </Link>
@@ -389,7 +389,7 @@ const Header = () => {
                       signOut();
                       setIsMenuOpen(false);
                     }}
-                    className="block text-base text-foreground/60 hover:text-foreground transition-colors"
+                    className="block text-sm sm:text-base text-foreground/60 hover:text-foreground transition-colors"
                   >
                     Leave
                   </button>

@@ -73,12 +73,12 @@ const ArtworkInfoPanel = ({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-            className="fixed top-0 right-0 bottom-0 w-full max-w-lg bg-background z-[260] shadow-2xl overflow-y-auto"
+            className="fixed top-0 right-0 bottom-0 w-full sm:max-w-lg bg-background z-[260] shadow-2xl overflow-y-auto"
           >
             {/* Header */}
             <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-10">
-              <div className="flex items-center justify-between px-6 py-4">
-                <span className="text-xs uppercase tracking-widest text-foreground/50">
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
+                <span className="text-[10px] sm:text-xs uppercase tracking-widest text-foreground/50">
                   Artwork Details
                 </span>
                 <button
@@ -92,15 +92,15 @@ const ArtworkInfoPanel = ({
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-8">
+            <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
               {/* Title & Artist */}
               <div>
-                <h2 className="text-3xl md:text-4xl font-serif font-medium leading-tight mb-3">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-medium leading-tight mb-2 sm:mb-3">
                   {artwork.title}
                 </h2>
                 <Link
                   to={`/artist/${artwork.artists?.slug}`}
-                  className="inline-flex items-center gap-1 text-lg text-foreground/70 hover:text-foreground transition-colors group"
+                  className="inline-flex items-center gap-1 text-base sm:text-lg text-foreground/70 hover:text-foreground transition-colors group"
                 >
                   {artwork.artists?.name || 'Unknown Artist'}
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -115,22 +115,22 @@ const ArtworkInfoPanel = ({
               )}
 
               {/* Details Grid */}
-              <div className="grid grid-cols-2 gap-4 py-6 border-y border-border">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 py-4 sm:py-6 border-y border-border">
                 {artwork.medium && (
                   <div>
-                    <span className="text-xs uppercase tracking-wider text-foreground/50">Medium</span>
-                    <p className="mt-1 font-serif">{artwork.medium}</p>
+                    <span className="text-[10px] sm:text-xs uppercase tracking-wider text-foreground/50">Medium</span>
+                    <p className="mt-1 text-sm sm:text-base font-serif">{artwork.medium}</p>
                   </div>
                 )}
                 {artwork.dimensions && (
                   <div>
-                    <span className="text-xs uppercase tracking-wider text-foreground/50">Dimensions</span>
-                    <p className="mt-1 font-serif">{artwork.dimensions}</p>
+                    <span className="text-[10px] sm:text-xs uppercase tracking-wider text-foreground/50">Dimensions</span>
+                    <p className="mt-1 text-sm sm:text-base font-serif">{artwork.dimensions}</p>
                   </div>
                 )}
                 <div>
-                  <span className="text-xs uppercase tracking-wider text-foreground/50">Edition</span>
-                  <p className="mt-1 font-serif">
+                  <span className="text-[10px] sm:text-xs uppercase tracking-wider text-foreground/50">Edition</span>
+                  <p className="mt-1 text-sm sm:text-base font-serif">
                     {artwork.edition_total === 1
                       ? 'Unique work'
                       : `${artwork.edition_available}/${artwork.edition_total}`}
@@ -138,8 +138,8 @@ const ArtworkInfoPanel = ({
                 </div>
                 {artwork.year && (
                   <div>
-                    <span className="text-xs uppercase tracking-wider text-foreground/50">Year</span>
-                    <p className="mt-1 font-serif">{artwork.year}</p>
+                    <span className="text-[10px] sm:text-xs uppercase tracking-wider text-foreground/50">Year</span>
+                    <p className="mt-1 text-sm sm:text-base font-serif">{artwork.year}</p>
                   </div>
                 )}
               </div>
@@ -179,16 +179,16 @@ const ArtworkInfoPanel = ({
               {/* Pricing */}
               <div className="space-y-4">
                 <div>
-                  <p className="text-3xl md:text-4xl font-serif font-medium">
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-serif font-medium">
                     {artwork.price_usd ? `$${artwork.price_usd.toLocaleString()}` : 'Price on request'}
                   </p>
                   {artwork.price_eth && (
-                    <span className="text-lg text-foreground/60">
+                    <span className="text-base sm:text-lg text-foreground/60">
                       {artwork.price_eth} ETH
                     </span>
                   )}
                   {artwork.royalty_percentage && (
-                    <p className="text-xs text-foreground/50 mt-2">
+                    <p className="text-[10px] sm:text-xs text-foreground/50 mt-2">
                       Artist royalty: {artwork.royalty_percentage}% on secondary sales
                     </p>
                   )}

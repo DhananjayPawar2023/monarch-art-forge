@@ -132,7 +132,7 @@ const Index = () => {
       
       <main className="flex-1">
         {/* Hero Section - Asymmetrical, Editorial Layout */}
-        <section className="relative min-h-screen flex items-center pt-20 lg:pt-0">
+        <section className="relative min-h-screen flex items-center pt-24 pb-16 sm:pt-20 lg:pt-0 lg:pb-0">
           {/* Background Image - Faint overlay */}
           <div className="absolute inset-0 z-0">
             <div 
@@ -144,7 +144,7 @@ const Index = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
           </div>
 
-          <div className="container mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
             <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               {/* Left Column - Main Heading */}
               <motion.div
@@ -153,25 +153,25 @@ const Index = () => {
                 transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
                 className="lg:col-span-7 xl:col-span-6"
               >
-                <span className="text-[10px] uppercase tracking-[0.3em] text-foreground/50 mb-6 block">
+                <span className="text-[10px] uppercase tracking-[0.3em] text-foreground/50 mb-4 sm:mb-6 block">
                   Est. 2024
                 </span>
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-serif font-medium leading-[0.9] hero-heading tracking-[-0.04em] mb-8">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif font-medium leading-[0.95] hero-heading tracking-[-0.04em] mb-6 sm:mb-8">
                   Where Art
                   <br />
                   <span className="text-foreground/70">Meets Story</span>
                 </h1>
-                <p className="text-lg md:text-xl text-foreground/60 max-w-md leading-relaxed mb-10">
+                <p className="text-base sm:text-lg md:text-xl text-foreground/60 max-w-md leading-relaxed mb-8 sm:mb-10">
                   A curated platform showcasing digital and physical artworks from visionary artists worldwide.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <Link to="/explore">
-                    <Button size="lg" className="min-w-[180px]">
+                    <Button size="lg" className="w-full sm:w-auto min-w-[160px]">
                       <span>Explore Collection</span>
                     </Button>
                   </Link>
                   <Link to="/artists">
-                    <Button size="lg" variant="outline" className="min-w-[180px]">
+                    <Button size="lg" variant="outline" className="w-full sm:w-auto min-w-[160px]">
                       <span>Meet Artists</span>
                     </Button>
                   </Link>
@@ -202,8 +202,10 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Scroll Indicator */}
-          <ScrollIndicator />
+          {/* Scroll Indicator - Hidden on mobile */}
+          <div className="hidden sm:block">
+            <ScrollIndicator />
+          </div>
         </section>
 
         {/* Featured Section */}
