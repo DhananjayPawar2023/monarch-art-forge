@@ -114,40 +114,40 @@ const ImageViewer = ({ isOpen, onClose, src, alt }: ImageViewerProps) => {
           className="fixed inset-0 z-[300] bg-black"
         >
           {/* Controls */}
-          <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-6 py-4">
-            <div className="flex items-center gap-2">
+          <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
+            <div className="flex items-center gap-1 sm:gap-2">
               <button
                 onClick={handleZoomIn}
-                className="p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
+                className="p-2 sm:p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
                 aria-label="Zoom in"
               >
-                <ZoomIn className="w-5 h-5" strokeWidth={1.5} />
+                <ZoomIn className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
               </button>
               <button
                 onClick={handleZoomOut}
-                className="p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
+                className="p-2 sm:p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
                 aria-label="Zoom out"
               >
-                <ZoomOut className="w-5 h-5" strokeWidth={1.5} />
+                <ZoomOut className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
               </button>
               <button
                 onClick={handleReset}
-                className="p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
+                className="p-2 sm:p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
                 aria-label="Reset view"
               >
-                <RotateCcw className="w-5 h-5" strokeWidth={1.5} />
+                <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
               </button>
-              <span className="ml-3 text-sm text-white/60 font-mono">
+              <span className="ml-2 sm:ml-3 text-xs sm:text-sm text-white/60 font-mono hidden sm:inline">
                 {Math.round(scale * 100)}%
               </span>
             </div>
 
             <button
               onClick={onClose}
-              className="p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
+              className="p-2 sm:p-3 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300"
               aria-label="Close viewer"
             >
-              <X className="w-5 h-5" strokeWidth={1.5} />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
             </button>
           </div>
 
@@ -173,13 +173,13 @@ const ImageViewer = ({ isOpen, onClose, src, alt }: ImageViewerProps) => {
                 stiffness: 300,
                 damping: 30,
               }}
-              className="max-w-[90vw] max-h-[85vh] object-contain select-none"
+              className="max-w-[95vw] sm:max-w-[90vw] max-h-[80vh] sm:max-h-[85vh] object-contain select-none"
               draggable={false}
             />
           </div>
 
-          {/* Instructions */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center">
+          {/* Instructions - Hidden on mobile for cleaner UI */}
+          <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 text-center hidden sm:block">
             <p className="text-xs text-white/40">
               Double-click to zoom • Scroll to adjust • Drag to pan
             </p>
