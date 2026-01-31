@@ -9,6 +9,7 @@ import ArtworkCard from "@/components/ArtworkCard";
 import FeaturedArtist from "@/components/FeaturedArtist";
 import SEO from "@/components/SEO";
 import ScrollIndicator from "@/components/ScrollIndicator";
+import ExternalPlatformsSection from "@/components/ExternalPlatformsSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -271,6 +272,9 @@ const Index = () => {
             slug={featuredArtist.slug}
           />
         )}
+
+        {/* External Platforms Section */}
+        <ExternalPlatformsSection />
 
         {/* Newsletter Section */}
         <section className="py-24 lg:py-32 border-t border-border">

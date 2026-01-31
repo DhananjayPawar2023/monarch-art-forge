@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import SearchOverlay from "@/components/SearchOverlay";
+import WalletConnect from "@/components/WalletConnect";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -155,7 +156,7 @@ const Header = () => {
             </nav>
 
             {/* Right side */}
-            <div className="flex items-center gap-3 lg:gap-5">
+            <div className="flex items-center gap-2 lg:gap-4">
               {/* Search Icon */}
               <button
                 onClick={() => setIsSearchOpen(true)}
@@ -164,6 +165,11 @@ const Header = () => {
               >
                 <Search className="w-4 h-4" strokeWidth={1.5} />
               </button>
+
+              {/* Connect Wallet - Desktop */}
+              <div className="hidden lg:block">
+                <WalletConnect />
+              </div>
 
               {user ? (
                 <DropdownMenu>

@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import ReadingProgressBar from "@/components/ReadingProgressBar";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft } from "lucide-react";
@@ -133,6 +134,7 @@ const JournalPostDetail = () => {
         description={post.excerpt || `Read ${post.title} on Monarch`}
         image={post.cover_image_url || undefined}
       />
+      <ReadingProgressBar />
       <Header />
       
       <main className="flex-1 pt-20 lg:pt-24">
