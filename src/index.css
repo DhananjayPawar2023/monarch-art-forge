@@ -42,13 +42,16 @@
 
     --radius: 0.125rem;
 
-    /* Monarch Custom Tokens */
-    --gallery-gradient: linear-gradient(180deg, hsl(40 20% 98%), hsl(35 15% 96%));
+    /* Monarch Design Tokens - Consistent System */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.03);
     --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.06);
     --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / 0.08);
-    --shadow-editorial: 0 20px 40px -12px rgb(0 0 0 / 0.1);
-    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Timing functions - unified easing */
+    --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --duration-fast: 200ms;
+    --duration-normal: 300ms;
+    --duration-slow: 500ms;
 
     /* Sidebar tokens */
     --sidebar-background: 40 15% 97%;
@@ -94,12 +97,10 @@
     --input: 30 6% 18%;
     --ring: 35 12% 75%;
 
-    /* Dark mode custom tokens */
-    --gallery-gradient: linear-gradient(180deg, hsl(30 8% 8%), hsl(30 8% 6%));
+    /* Dark mode design tokens */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
     --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.3);
     --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / 0.4);
-    --shadow-editorial: 0 20px 40px -12px rgb(0 0 0 / 0.5);
 
     --sidebar-background: 30 8% 6%;
     --sidebar-foreground: 35 10% 85%;
