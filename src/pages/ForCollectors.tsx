@@ -5,9 +5,10 @@ import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, Sparkles, Bell, Handshake } from "lucide-react";
+import { Heart, Crown, Bell, Handshake } from "lucide-react";
 import { z } from "zod";
 
 const emailSchema = z.string().email();
@@ -126,8 +127,8 @@ const ForCollectors = () => {
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Card className="p-8 hover:shadow-lg transition-shadow">
-                <Sparkles className="w-12 h-12 mb-4 text-accent" />
+              <Card className="p-8 transition-shadow duration-300 ease-out hover:shadow-md">
+                <Crown className="w-10 h-10 mb-4 text-accent" />
                 <h3 className="text-xl font-serif font-medium mb-3">Limited Editions</h3>
                 <p className="text-muted-foreground">
                   Access exclusive artworks with certified authenticity and limited availability, 
@@ -135,8 +136,8 @@ const ForCollectors = () => {
                 </p>
               </Card>
 
-              <Card className="p-8 hover:shadow-lg transition-shadow">
-                <Handshake className="w-12 h-12 mb-4 text-accent" />
+              <Card className="p-8 transition-shadow duration-300 ease-out hover:shadow-md">
+                <Handshake className="w-10 h-10 mb-4 text-accent" />
                 <h3 className="text-xl font-serif font-medium mb-3">Artist Collaborations</h3>
                 <p className="text-muted-foreground">
                   Participate in special projects where collectors and artists co-create unique pieces 
@@ -144,16 +145,16 @@ const ForCollectors = () => {
                 </p>
               </Card>
 
-              <Card className="p-8 hover:shadow-lg transition-shadow">
-                <Bell className="w-12 h-12 mb-4 text-accent" />
+              <Card className="p-8 transition-shadow duration-300 ease-out hover:shadow-md">
+                <Bell className="w-10 h-10 mb-4 text-accent" />
                 <h3 className="text-xl font-serif font-medium mb-3">Early Access</h3>
                 <p className="text-muted-foreground">
                   Be the first to discover and acquire new releases before they're available to the public.
                 </p>
               </Card>
 
-              <Card className="p-8 hover:shadow-lg transition-shadow">
-                <Heart className="w-12 h-12 mb-4 text-accent" />
+              <Card className="p-8 transition-shadow duration-300 ease-out hover:shadow-md">
+                <Heart className="w-10 h-10 mb-4 text-accent" />
                 <h3 className="text-xl font-serif font-medium mb-3">Concierge Support</h3>
                 <p className="text-muted-foreground">
                   Get personalized art sourcing assistance tailored to your taste, space, and collecting goals.
@@ -199,8 +200,8 @@ const ForCollectors = () => {
                 required
                 className="flex-1"
               />
-              <Button size="lg" type="submit" disabled={subscribing}>
-                {subscribing ? 'Joining...' : 'Join Circle'}
+              <Button size="lg" type="submit" disabled={subscribing} className="min-w-[120px]">
+                {subscribing ? <LoadingSpinner size="sm" /> : 'Join Circle'}
               </Button>
             </form>
           </div>

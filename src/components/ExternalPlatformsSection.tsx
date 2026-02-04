@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ExternalLink, Gem, Sparkles } from 'lucide-react';
+import { ExternalLink, Gem, Globe } from 'lucide-react';
 
 interface ExternalWork {
   id: string;
@@ -11,52 +11,46 @@ interface ExternalWork {
   price?: string;
 }
 
-// Mock data - in production, these would be fetched from the platforms' APIs or stored in database
+// Placeholder data - replace with actual API integration or database entries
 const externalWorks: ExternalWork[] = [
   {
     id: '1',
-    title: 'Digital Horizon',
+    title: 'Untitled Study No. 4',
     platform: 'superrare',
     imageUrl: 'https://images.unsplash.com/photo-1634017839464-5c339bbe3c35?w=800&q=80',
-    artistName: 'Elena Voss',
+    artistName: 'Artist Name',
     externalUrl: 'https://superrare.com',
     price: '2.5 ETH'
   },
   {
     id: '2',
-    title: 'Chromatic Dreams',
+    title: 'Composition in Blue',
     platform: 'verse',
     imageUrl: 'https://images.unsplash.com/photo-1549490349-8643362247b5?w=800&q=80',
-    artistName: 'Marcus Chen',
+    artistName: 'Artist Name',
     externalUrl: 'https://verse.works',
     price: '1.8 ETH'
   },
   {
     id: '3',
-    title: 'Abstract Resonance',
+    title: 'Form Study',
     platform: 'foundation',
     imageUrl: 'https://images.unsplash.com/photo-1578926288207-32356a632e53?w=800&q=80',
-    artistName: 'Aria Nova',
+    artistName: 'Artist Name',
     externalUrl: 'https://foundation.app',
     price: '3.2 ETH'
   },
   {
     id: '4',
-    title: 'Synthetic Nature',
+    title: 'Organic Pattern',
     platform: 'zora',
     imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80',
-    artistName: 'James Wright',
+    artistName: 'Artist Name',
     externalUrl: 'https://zora.co',
   }
 ];
 
-const platformColors: Record<string, string> = {
-  superrare: 'from-purple-500/20 to-pink-500/20',
-  verse: 'from-blue-500/20 to-cyan-500/20',
-  foundation: 'from-green-500/20 to-emerald-500/20',
-  zora: 'from-orange-500/20 to-yellow-500/20'
-};
-
+// Neutral hover states using design system tokens - no purple/pink gradients
 const platformLabels: Record<string, string> = {
   superrare: 'SuperRare',
   verse: 'Verse',
@@ -72,17 +66,16 @@ const ExternalPlatformsSection = () => {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-4 h-4 text-muted-foreground" />
+              <Globe className="w-4 h-4 text-muted-foreground" />
               <span className="text-xs uppercase tracking-widest text-muted-foreground font-sans">
-                Cross-Platform Curation
+                Across Platforms
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal tracking-tight">
-              Beyond Monarch
+              Selected Works
             </h2>
             <p className="mt-4 text-muted-foreground font-serif max-w-xl">
-              Discover works by our artists across leading digital art platforms. 
-              A unified view of contemporary digital culture.
+              Works from our represented artists available across leading digital art platforms.
             </p>
           </div>
           
@@ -125,13 +118,13 @@ const ExternalPlatformsSection = () => {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 
-                {/* Platform Gradient Overlay */}
+                {/* Subtle overlay on hover - no colored gradients */}
                 <div 
-                  className={`absolute inset-0 bg-gradient-to-t ${platformColors[work.platform]} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+                  className="absolute inset-0 bg-foreground/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                 />
                 
                 {/* External Link Icon */}
-                <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out transform translate-y-1 group-hover:translate-y-0">
                   <ExternalLink className="w-4 h-4" />
                 </div>
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useToast } from "@/hooks/use-toast";
 import { Instagram, Twitter, Mail } from "lucide-react";
 import { z } from "zod";
@@ -111,7 +112,7 @@ const Contact = () => {
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="Jane Doe"
+                        placeholder="Your name"
                       />
                     </div>
 
@@ -153,7 +154,14 @@ const Contact = () => {
                       className="w-full"
                       disabled={submitting}
                     >
-                      {submitting ? "Sending..." : "Send Message"}
+                      {submitting ? (
+                        <span className="flex items-center gap-2">
+                          <LoadingSpinner size="sm" />
+                          Sending
+                        </span>
+                      ) : (
+                        'Send Message'
+                      )}
                     </Button>
                   </form>
                 </Card>

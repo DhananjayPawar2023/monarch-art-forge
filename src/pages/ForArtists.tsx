@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useToast } from "@/hooks/use-toast";
 import { Palette, AudioLines, Image, Users } from "lucide-react";
 import { z } from "zod";
@@ -113,32 +114,32 @@ const ForArtists = () => {
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Card className="p-8 hover:shadow-lg transition-shadow">
-                <Palette className="w-12 h-12 mb-4 text-accent" />
+              <Card className="p-8 transition-shadow duration-300 ease-out hover:shadow-md">
+                <Palette className="w-10 h-10 mb-4 text-accent" />
                 <h3 className="text-xl font-serif font-medium mb-3">Curated Exhibitions</h3>
                 <p className="text-muted-foreground">
                   Featured in both digital showcases and physical gallery spaces, reaching collectors worldwide.
                 </p>
               </Card>
 
-              <Card className="p-8 hover:shadow-lg transition-shadow">
-                <AudioLines className="w-12 h-12 mb-4 text-accent" />
+              <Card className="p-8 transition-shadow duration-300 ease-out hover:shadow-md">
+                <AudioLines className="w-10 h-10 mb-4 text-accent" />
                 <h3 className="text-xl font-serif font-medium mb-3">Audio Storytelling</h3>
                 <p className="text-muted-foreground">
                   Share your artistic journey through intimate audio interviews that bring your work to life.
                 </p>
               </Card>
 
-              <Card className="p-8 hover:shadow-lg transition-shadow">
-                <Image className="w-12 h-12 mb-4 text-accent" />
-                <h3 className="text-xl font-serif font-medium mb-3">Social Amplification</h3>
+              <Card className="p-8 transition-shadow duration-300 ease-out hover:shadow-md">
+                <Image className="w-10 h-10 mb-4 text-accent" />
+                <h3 className="text-xl font-serif font-medium mb-3">Platform Amplification</h3>
                 <p className="text-muted-foreground">
                   Get featured across our platforms, expanding your reach to engaged collectors and art enthusiasts.
                 </p>
               </Card>
 
-              <Card className="p-8 hover:shadow-lg transition-shadow">
-                <Users className="w-12 h-12 mb-4 text-accent" />
+              <Card className="p-8 transition-shadow duration-300 ease-out hover:shadow-md">
+                <Users className="w-10 h-10 mb-4 text-accent" />
                 <h3 className="text-xl font-serif font-medium mb-3">Limited Editions</h3>
                 <p className="text-muted-foreground">
                   Collaborate on exclusive collections that create scarcity and value for your work.
@@ -193,8 +194,8 @@ const ForArtists = () => {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Jane Doe"
-                  />
+                        placeholder="Your name"
+                      />
                 </div>
 
                 <div>
@@ -249,7 +250,14 @@ const ForArtists = () => {
                   className="w-full"
                   disabled={submitting}
                 >
-                  {submitting ? "Submitting..." : "Submit Application"}
+                  {submitting ? (
+                    <span className="flex items-center gap-2">
+                      <LoadingSpinner size="sm" />
+                      Submitting
+                    </span>
+                  ) : (
+                    'Submit Application'
+                  )}
                 </Button>
               </form>
             </Card>

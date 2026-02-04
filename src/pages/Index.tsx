@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
@@ -304,8 +305,12 @@ const Index = () => {
                     required
                     className="flex-1 h-12 bg-transparent border-foreground/20 focus:border-foreground/40"
                   />
-                  <Button size="lg" type="submit" disabled={subscribing}>
-                    {subscribing ? 'Subscribing...' : 'Subscribe'}
+                  <Button size="lg" type="submit" disabled={subscribing} className="min-w-[120px]">
+                    {subscribing ? (
+                      <LoadingSpinner size="sm" />
+                    ) : (
+                      'Subscribe'
+                    )}
                   </Button>
                 </form>
               </motion.div>
