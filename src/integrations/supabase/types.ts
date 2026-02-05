@@ -918,10 +918,12 @@ export type Database = {
       }
     }
     Functions: {
-      decrement_edition_available: {
-        Args: { artwork_id: string }
-        Returns: undefined
-      }
+      decrement_edition_available:
+        | { Args: { artwork_id: string }; Returns: undefined }
+        | {
+            Args: { artwork_id: string; order_id?: string }
+            Returns: undefined
+          }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
