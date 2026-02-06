@@ -155,7 +155,7 @@ const Checkout = () => {
       
       <main className="flex-1 pt-32 pb-24 px-4">
         <div className="container mx-auto max-w-6xl">
-          <h1 className="text-5xl font-serif font-medium mb-12">Checkout</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium mb-8 sm:mb-12">Checkout</h1>
           
           <form onSubmit={handleSubmit}>
             <div className="grid lg:grid-cols-3 gap-12">

@@ -36,21 +36,21 @@ const Cart = () => {
       
       <main className="flex-1 pt-32 pb-24 px-4">
         <div className="container mx-auto max-w-6xl">
-          <h1 className="text-5xl font-serif font-medium mb-12">Shopping Cart</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium mb-8 sm:mb-12">Shopping Cart</h1>
           
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-6">
               {items.map((item) => (
-                <div key={item.artworkId} className="flex gap-6 pb-6 border-b border-border">
+                <div key={item.artworkId} className="flex gap-3 sm:gap-6 pb-6 border-b border-border">
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-32 h-32 object-cover"
+                    className="w-20 h-20 sm:w-32 sm:h-32 object-cover flex-shrink-0"
                   />
-                  <div className="flex-1">
-                    <h3 className="text-xl font-medium mb-2">{item.title}</h3>
-                    <p className="text-muted-foreground mb-4">{item.artistName}</p>
-                    <p className="text-lg font-medium">${item.priceUsd.toLocaleString()}</p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base sm:text-xl font-medium mb-1 sm:mb-2 truncate">{item.title}</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground mb-2 sm:mb-4">{item.artistName}</p>
+                    <p className="text-base sm:text-lg font-medium">${item.priceUsd.toLocaleString()}</p>
                   </div>
                   <Button
                     variant="ghost"
